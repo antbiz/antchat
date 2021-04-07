@@ -1,106 +1,106 @@
 超级管理员-admin
-id
-username
-nickname
-email
-password
+- id
+- username
+- nickname
+- email
+- password
 ---------------------------------
 普通用户-user
-id
-username
-nickname
-email
-password
+- id
+- username
+- nickname
+- email
+- password
 ---------------------------------
 客户-account：一般指某个公司
-id
-name
-local
-domain
-support_email
+- id
+- name
+- local
+- domain
+- support_email
 ---------------------------------
 工时设定-working_time：客户工作时段设定
-id
-inbox_id 此字段待定，用于区分不同渠道下不同的设定
-account_id
-close_by_holidays 公共的假期：不区分年，应该是一个常规的日期：月/日
-close_by_dates：自定义假期：具体的日期：年/月/日
-start_week 周几开始
-end_week 周几结束
-start_time 每天几点开始
-end_time 每天几点结束
+- id
+- inbox_id 此字段待定，用于区分不同渠道下不同的设定
+- account_id
+- close_by_holidays 公共的假期：不区分年，应该是一个常规的日期：月/日
+- close_by_dates：自定义假期：具体的日期：年/月/日
+- start_week 周几开始
+- end_week 周几结束
+- start_time 每天几点开始
+- end_time 每天几点结束
 ---------------------------------
 团队-team：客户的团队，将多个客服放到一个团队里，方便自动转接
-id
-name
-description
-allow_auto_assign
-account_id
+- id
+- name
+- description
+- allow_auto_assign
+- account_id
 ---------------------------------
 客户团队成员-team_member：关联表
-id
-team_id
-agent_id
+- id
+- team_id
+- agent_id
 ---------------------------------
 客服-agent：客户下的某个客服，一般一个客户创建时会初始化第一个客服，用role做区分
-id
-account_id
-user_id
-role
-inviter_id
-active_at
+- id
+- account_id
+- user_id
+- role
+- inviter_id
+- active_at
 ---------------------------------
 联系人-contact：指访客
-id
-name
-email
-phone
-token
-ip
-geo
-domain
+- id
+- name
+- email
+- phone
+- token
+- ip
+- geo
+- domain
 ---------------------------------
 附件-attachment
-id
-file_type
-external_url
-latitude
-longitude
-message_id
-account_id
+- id
+- file_type
+- external_url
+- latitude
+- longitude
+- message_id
+- account_id
 ---------------------------------
 对话-conversation：对话是消息的载体，一次对话会包含多个消息，对话会记录参与者和活动时间
-id
-contact_id
-account_id
-assignee_id
-team_id
-status
-contact_last_seen_at
-agent_last_seen_at
-locked
-last_activity_at
+- id
+- contact_id
+- account_id
+- assignee_id
+- team_id
+- status
+- contact_last_seen_at
+- agent_last_seen_at
+- locked
+- last_activity_at
 ---------------------------------
 消息-message：消息，记录访客和客服之间具体的聊天内容
-id
-conversation_id
-account_id
-source_id
-external_source_ids
-sender_id
-sender_type
-private
-status
-message_type
-content
-content_type
-content_attributes
+- id
+- conversation_id
+- account_id
+- source_id
+- external_source_ids
+- sender_id
+- sender_type
+- private
+- status
+- message_type
+- content
+- content_type
+- content_attributes
 ---------------------------------
 内部沟通消息-communication：记录内部用户的对话
 ---------------------------------
 提醒-notification：内部通知
-id
-account_id
-user_id
-notification_type
+- id
+- account_id
+- user_id
+- notification_type
 ---------------------------------
