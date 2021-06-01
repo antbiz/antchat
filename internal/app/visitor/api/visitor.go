@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/antbiz/antchat/internal/app/visitor/dto"
+	"github.com/antbiz/antchat/internal/app/ws"
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/gogf/gf/frame/g"
@@ -52,13 +53,21 @@ func (visitorApi) Login(r *ghttp.Request) {
 		resp.DatabaseError(r, "保存信息失败")
 	}
 
-	// TODO: 通知客服该访客上线了
+	// 通知客服
+	ch := ws.GetChannelByUID(visitor.AgentID)
+	if ch != nil {
+		err = ch.WriteSystemMessagef("来自 %s 的客户进入对话", visitor.Address())
+		if err != nil {
+			g.Log().Async().Errorf("visitor.Login.NoticeAgentVisitorOnline: %v", err)
+		}
+	}
 
 	sessionData := g.Map{
-		"id":       visitorID,
-		"nickname": visitor.Nickname,
-		"sid":      r.Session.Id(),
-		"agentID":  visitor.AgentID,
+		"id":        visitorID,
+		"nickname":  visitor.Nickname,
+		"sid":       r.Session.Id(),
+		"agentID":   visitor.AgentID,
+		"isVisitor": true,
 	}
 	r.Session.SetMap(sessionData)
 	resp.OK(r, sessionData)

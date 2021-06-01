@@ -29,7 +29,13 @@ func (srv *Server) readPump(ch *Channel) {
 			srv.Bucket(ch.uid).Del(ch.uid)
 		}
 		_ = ch.conn.Close()
-		// TODO: 处理断开的业务逻辑
+		// 如果访客离开对话需要通知客服
+		if ch.sess.GetBool("isVisitor") {
+			agentCh := GetChannelByUID(ch.sess.GetString("agentID"))
+			if agentCh != nil {
+				_ = agentCh.WriteSystemMessagef("客户 %s 关闭对话", ch.sess.GetString("nickname"))
+			}
+		}
 	}()
 
 	ch.conn.SetReadLimit(srv.MaxMsgSize)
@@ -48,7 +54,6 @@ func (srv *Server) readPump(ch *Channel) {
 			return
 		}
 	}
-
 }
 
 // writePump send data to websocket conn

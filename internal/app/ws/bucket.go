@@ -24,6 +24,9 @@ func (b *Bucket) Del(uid string) {
 }
 
 func GetChannelByUID(uid string) *Channel {
+	if uid == "" {
+		return nil
+	}
 	b := chatSrv.Bucket(uid)
 	b.cLock.RLock()
 	ch := b.chs[uid]

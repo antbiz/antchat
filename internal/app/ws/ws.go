@@ -36,19 +36,12 @@ func ChatHandler(r *ghttp.Request) {
 		return
 	}
 
-	/*
-		根据token判断当前用户信息：客服/访客/其他
-		如果是访客的话需要通知对应的客服
-	*/
-	uid := ""
-
 	ch := &Channel{
-		uid:  uid,
+		uid:  r.Session.GetString("id"),
 		conn: ws,
 	}
-
-	b := chatSrv.Bucket(uid)
-	b.Set(uid, ch)
+	b := chatSrv.Bucket(ch.uid)
+	b.Set(ch.uid, ch)
 
 	go chatSrv.writePump(ch)
 	go chatSrv.readPump(ch)

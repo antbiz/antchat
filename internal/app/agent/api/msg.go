@@ -7,7 +7,6 @@ import (
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/antbiz/antchat/internal/shared"
 	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/os/gtime"
 )
 
 var Msg = new(msgApi)
@@ -39,15 +38,8 @@ func (msgApi) Send(r *ghttp.Request) {
 	if ch == nil {
 		resp.OK(r, "访客已关闭对话")
 	}
-	chatMsg := &ws.ChatMsg{
-		Type:      req.Type,
-		Content:   req.Content,
-		CreatedAt: gtime.Now().Timestamp(),
-		User: &ws.ChatMsgUser{
-			Avatar: ctxUser.Avatar,
-		},
-	}
-	if err := ch.WriteMessage(chatMsg); err != nil {
+
+	if err := ch.WriteMessage(ws.NewChatMsg(req.Type, ctxUser.Avatar, req.Content)); err != nil {
 		resp.InternalServer(r, "err_ws_write_msg", "发送失败")
 	}
 	resp.OK(r)

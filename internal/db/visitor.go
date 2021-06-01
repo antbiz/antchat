@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/qiniu/qmgo"
@@ -23,6 +24,10 @@ type Visitor struct {
 	Country      string `bson:"country"`
 	City         string `bson:"city"`
 	AgentID      string `bons:"agentID"`
+}
+
+func (visitor *Visitor) Address() string {
+	return fmt.Sprintf("%s%s", visitor.Country, visitor.City)
 }
 
 func GetVisitorCollection() *qmgo.Collection {
