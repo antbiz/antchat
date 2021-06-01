@@ -1,8 +1,9 @@
 package dto
 
-type SendMsgRequest struct {
-	SeqId        string `json:"seq" v:"required"`  // sequence number chosen by client
-	Body         []byte `json:"body" v:"required"` // binary body bytes
+import "github.com/antbiz/antchat/internal/app/ws"
+
+type SendMsgReq struct {
+	ws.ChatMsg
 	SenderID     string
 	SenderRole   int
 	SenderNick   string
@@ -10,6 +11,6 @@ type SendMsgRequest struct {
 	ReceiverNick string `json:"receiverNick" v:"required"`
 }
 
-type PullMsgRequest struct {
+type PullMsgReq struct {
 	VisitorID string `json:"visitorID" v:"required"`
 }

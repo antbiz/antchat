@@ -1,11 +1,19 @@
 package ws
 
-type Msg struct {
-	SeqId        string `json:"seq" v:"required"`  // sequence number chosen by client
-	Body         []byte `json:"body" v:"required"` // binary body bytes
-	SenderID     string
-	SenderRole   int
-	SenderNick   string
-	ReceiverID   string
-	ReceiverNick string
+const (
+	ChatMsgTypeSystem = "system"
+	ChatMsgTypeText   = "text"
+	ChatMsgTypeImage  = "image"
+	ChatMsgTypeCmd    = "cmd"
+)
+
+type ChatMsg struct {
+	Type      string       `json:"type"`
+	Content   interface{}  `json:"content" v:"required"`
+	CreatedAt int64        `json:"createdAt"`
+	User      *ChatMsgUser `json:"user"`
+}
+
+type ChatMsgUser struct {
+	Avatar string `json:"avatar"`
 }

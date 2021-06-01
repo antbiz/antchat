@@ -34,8 +34,8 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 		resp.Unauthorized(r, "incorrect_password", "密码错误")
 	}
 
-	reply := g.Map{
-		"_id":      user.Id,
+	sessionData := g.Map{
+		"id":       user.ID,
 		"username": user.Username,
 		"nickname": user.Nickname,
 		"phone":    user.Phone,
@@ -45,8 +45,8 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 		"role":     1,
 		"sid":      r.Session.Id(),
 	}
-	r.Session.SetMap(reply)
-	resp.OK(r, reply)
+	r.Session.SetMap(sessionData)
+	resp.OK(r, sessionData)
 }
 
 // LogOut 退出登录
@@ -59,7 +59,7 @@ func (userApi) LogOut(r *ghttp.Request) {
 
 // GetInfo 获取个人信息
 func (userApi) GetInfo(r *ghttp.Request) {
-	user, err := db.GetUserByID(r.Context(), r.Session.GetString("_id"))
+	user, err := db.GetUserByID(r.Context(), r.Session.GetString("id"))
 	if err != nil {
 		resp.NotFound(r, "account_not_found", "该账号尚未注册")
 	}

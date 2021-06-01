@@ -7,7 +7,7 @@ import (
 
 // Auth 鉴权中间件
 func Auth(r *ghttp.Request) {
-	if r.Session.GetString("_id") == "" {
+	if r.Session.GetString("id") == "" {
 		resp.Unauthorized(r, "unauthorized", "未登录或非法访问")
 	}
 

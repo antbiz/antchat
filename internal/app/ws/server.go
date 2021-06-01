@@ -61,7 +61,7 @@ func (srv *Server) writePump(ch *Channel) {
 
 	for {
 		select {
-		case msg, ok := <-ch.send:
+		case message, ok := <-ch.send:
 			ch.conn.SetWriteDeadline(time.Now().Add(srv.WriteWait))
 			if !ok {
 				ch.conn.WriteMessage(ghttp.WS_MSG_CLOSE, []byte{})
@@ -71,13 +71,12 @@ func (srv *Server) writePump(ch *Channel) {
 			if err != nil {
 				return
 			}
-			w.Write(msg.Body)
+			w.Write(message)
 
 			n := len(ch.send)
 			for i := 0; i < n; i++ {
 				w.Write([]byte{'\n'})
-				queuedMsg, _ := <-ch.send
-				w.Write(queuedMsg.Body)
+				w.Write(<-ch.send)
 			}
 
 			if err := w.Close(); err != nil {

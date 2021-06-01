@@ -3,15 +3,27 @@ package db
 import (
 	"context"
 	"sync"
+	"time"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/qiniu/qmgo"
+	"github.com/qiniu/qmgo/field"
 )
 
 var (
 	cli  *qmgo.Client
 	once sync.Once
 )
+
+type DefaultField struct {
+	ID        string    `bson:"id"`
+	CreatedAt time.Time `bson:"createdAt"`
+	UpdatedAt time.Time `bson:"updatedAt"`
+}
+
+func (DefaultField) CustomFields() field.CustomFieldsBuilder {
+	return field.NewCustom().SetId("id").SetCreateAt("createdAt").SetUpdateAt("updatedAt")
+}
 
 // Cli is mongo client
 func Cli() *qmgo.Client {
