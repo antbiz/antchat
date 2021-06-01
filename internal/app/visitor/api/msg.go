@@ -38,8 +38,8 @@ func (msgApi) Send(r *ghttp.Request) {
 	resp.OK(r)
 }
 
-// Pull 拉取消息列表
-func (msgApi) Pull(r *ghttp.Request) {
+// History 拉取消息列表
+func (msgApi) History(r *ghttp.Request) {
 	ctx := r.Context()
 	ctxVisitor := shared.Ctx.GetCtxVisitor(ctx)
 

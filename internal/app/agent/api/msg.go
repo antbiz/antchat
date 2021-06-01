@@ -53,8 +53,8 @@ func (msgApi) Send(r *ghttp.Request) {
 	resp.OK(r)
 }
 
-// Pull 拉取消息列表
-func (msgApi) Pull(r *ghttp.Request) {
+// History 拉取消息列表
+func (msgApi) History(r *ghttp.Request) {
 	var req *dto.PullMsgReq
 	if err := r.Parse(&req); err != nil {
 		resp.InvalidArgument(r, err.Error())
