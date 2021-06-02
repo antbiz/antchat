@@ -3,9 +3,7 @@ package db
 import (
 	"context"
 
-	"github.com/gogf/gf/container/garray"
 	"github.com/qiniu/qmgo"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Agent 客服
@@ -21,23 +19,11 @@ func GetAgentCollection() *qmgo.Collection {
 	return DB().Collection("agent")
 }
 
-func GetOnlineAgents(ctx context.Context) ([]*Agent, error) {
+func GetAllAgents(ctx context.Context, filter interface{}) ([]*Agent, error) {
 	agents := make([]*Agent, 0)
-	err := GetAgentCollection().Find(ctx, bson.M{"online": true}).All(&agents)
+	err := GetAgentCollection().Find(ctx, filter).All(&agents)
 	if err != nil {
 		return nil, err
 	}
 	return agents, nil
-}
-
-func GetOnlineAgentIDs(ctx context.Context) (*garray.StrArray, error) {
-	agents, err := GetOnlineAgents(ctx)
-	if err != nil {
-		return nil, err
-	}
-	ids := garray.NewStrArray()
-	for _, agent := range agents {
-		ids.Append(agent.ID)
-	}
-	return ids, nil
 }

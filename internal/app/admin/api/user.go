@@ -42,7 +42,6 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 		"email":    user.Email,
 		"avatar":   user.Avatar,
 		"language": user.Language,
-		"role":     1,
 		"sid":      r.Session.Id(),
 	}
 	r.Session.SetMap(sessionData)
@@ -60,10 +59,6 @@ func (userApi) LogOut(r *ghttp.Request) {
 // GetInfo 获取个人信息
 func (userApi) GetInfo(r *ghttp.Request) {
 	user, err := db.GetUserByID(r.Context(), r.Session.GetString("id"))
-	if err != nil {
-		resp.NotFound(r, "account_not_found", "该账号尚未注册")
-	}
-
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.NotFound(r, "account_not_found", "该账号尚未注册")

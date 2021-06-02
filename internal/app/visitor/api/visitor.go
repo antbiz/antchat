@@ -2,12 +2,12 @@ package api
 
 import (
 	"github.com/antbiz/antchat/internal/app/visitor/dto"
+	"github.com/antbiz/antchat/internal/app/visitor/service"
 	"github.com/antbiz/antchat/internal/app/ws"
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/util/grand"
 )
 
 var Visitor = new(visitorApi)
@@ -38,15 +38,12 @@ func (visitorApi) Login(r *ghttp.Request) {
 		}
 		visitor.AgentID = storeVisitor.AgentID
 	}
-	onlineAgentsIDs, err := db.GetOnlineAgentIDs(ctx)
+
+	selectOneAgent, err := service.SelectAgentID(ctx, visitor.AgentID)
 	if err != nil {
-		g.Log().Async().Errorf("visitor.Login.GetOnlineAgentIDs: %v", err)
+		g.Log().Async().Errorf("visitor.Login.SelectAgentID: %v", err)
 	}
-	if !onlineAgentsIDs.Contains(visitor.AgentID) {
-		// TODO: 优化这里，目前是随机选择
-		randAgentID, _ := onlineAgentsIDs.Get(grand.Intn(onlineAgentsIDs.Len()))
-		visitor.AgentID = randAgentID
-	}
+	visitor.AgentID = selectOneAgent
 
 	visitorID, err := db.UpsertVisitor(r.Context(), req.VisitorID, visitor)
 	if err != nil {
