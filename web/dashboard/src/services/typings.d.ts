@@ -24,10 +24,9 @@ declare namespace API {
   };
 
   type SigninRequest = {
-    username?: string;
+    login?: string;
     password?: string;
     autoLogin?: boolean;
-    type?: string;
   };
 
   type SigninReply = {

@@ -22,7 +22,7 @@ const getAccess = () => {
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 export default {
   // 支持值为 Object 和 Array
-  'GET /api/currentUser': (req: Request, res: Response) => {
+  'GET /api/user/info': (req: Request, res: Response) => {
     if (!getAccess()) {
       res.status(401).send({
         data: {
@@ -107,7 +107,7 @@ export default {
       address: 'Sidney No. 1 Lake Park',
     },
   ],
-  'POST /api/account/login': async (req: Request, res: Response) => {
+  'POST /api/account/signin': async (req: Request, res: Response) => {
     const { login } = req.body;
     await waitTime(2000);
     if (login === 'admin') {
@@ -123,8 +123,9 @@ export default {
       return;
     }
     res.status(401).send({
-      code: 401,
-      message: '账号或密码错误',
+      errorCode: '401',
+      errorMessage: '账号或密码错误！',
+      success: true,
     });
   },
   'POST /api/account/logout': (req: Request, res: Response) => {

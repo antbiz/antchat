@@ -15,12 +15,12 @@
   },
   {
     path: '/',
-    redirect: '/dashboard',
+    redirect: '/conversation',
   },
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    icon: 'smile',
-    component: './Welcome',
+    path: '/conversation',
+    name: 'conversation',
+    icon: 'message',
+    component: './conversation',
   },
 ];
