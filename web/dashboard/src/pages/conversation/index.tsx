@@ -3,31 +3,17 @@ import { List, Result, Comment, Tooltip } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import Chat, { Bubble, useMessages } from '@chatui/core';
-import useWebSocket, { ReadyState } from "react-use-websocket";
+import useWebSocket from "react-use-websocket";
 import '@chatui/core/dist/index.css';
 import './index.less';
 
 export type Conversation = {
-  id?: string;
+  id: string;
   active?: boolean;
   avatar?: string;
   contactName?: string;
   msg?: string;
 }
-
-const initialMessages = [
-  {
-    type: 'text',
-    content: { text: '主人好，我是智能助理，你的贴心小助手~' },
-    user: { avatar: '//gw.alicdn.com/tfs/TB1DYHLwMHqK1RjSZFEXXcGMXXa-56-62.svg' },
-  },
-  {
-    type: 'image',
-    content: {
-      picUrl: 'https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png',
-    },
-  },
-];
 
 // 默认快捷短语，可选
 const defaultQuickReplies = [
@@ -50,59 +36,33 @@ const defaultQuickReplies = [
   },
 ];
 
-const dataSource = [
-  {
-    id: 'q',
-    contactName: '语雀的天空',
-    avatar:
-      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
-    msg: '主人好，我是智能助理，你的贴心小助手~',
-  },
-  {
-    id: 'w',
-    contactName: 'Ant Design',
-    avatar:
-      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
-    msg: '主人好，我是智能助理，你的贴心小助手~',
-  },
-  {
-    id: 'e',
-    contactName: '蚂蚁金服体验科技',
-    avatar:
-      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
-    msg: '主人好，我是智能助理，你的贴心小助手~',
-  },
-  {
-    id: 't',
-    contactName: 'TechUI',
-    avatar:
-      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
-    desc: '我是一条测试的描述',
-    msg: '主人好，我是智能助理，你的贴心小助手~',
-  },
-];
-
 export default (): React.ReactNode => {
   const [tab, setTab] = useState('mine');
-  const [activeConversation, setActiveConversation] = useState<String>(dataSource[0].id);
+  const [mineContacts, setMineContacts] = useState<Conversation[]>();
+  const [activeConversation, setActiveConversation] = useState<String>('');
   // 消息列表
-  const { messages, appendMsg, setTyping } = useMessages(initialMessages);
+  const { messages, appendMsg, setTyping } = useMessages();
 
   const {
     sendJsonMessage
   } = useWebSocket(
     'ws://localhost:8199',
     {
+      onOpen: () => console.log("Connection Opened"),
+      onClose: () => console.log("Websocket Connection Closed"),
       onError: (event: any) => console.log(event),
       onMessage: (event: any) => {
         const response = JSON.parse(event.data);
-        appendMsg({
-          ...response,
-          position: 'left',
-        })
+        console.log("recevied: ", response);
+        if (response.type === "cmd" && response.content && response.content.code === "mine_contacts") {
+          setMineContacts(response.content.list);
+          setActiveConversation(response.content.list[0].id);
+        } else {
+          appendMsg({
+            ...response,
+            position: 'left',
+          })
+        }
       },
       share: true,
       //Will attempt to reconnect on all close events, such as server shutting down
@@ -177,7 +137,7 @@ export default (): React.ReactNode => {
               pageSize: 10,
             }}
             itemLayout="horizontal"
-            dataSource={dataSource}
+            dataSource={mineContacts}
             renderItem={item => (
               <div className={`conversation ${activeConversation === item.id ? 'active': '' }`}
                 onClick={(e) => {
@@ -214,7 +174,7 @@ export default (): React.ReactNode => {
             />
           ) : (
             <Chat
-              navbar={{ title: '匿名用户 127.0.0.1' }}
+              navbar={{ title: `匿名用户 ${activeConversation}` }}
               messages={messages}
               renderMessageContent={renderMessageContent}
               quickReplies={defaultQuickReplies}
