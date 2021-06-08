@@ -3,6 +3,7 @@ import { List, Result, Comment, Tooltip } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import Chat, { Bubble, useMessages } from '@chatui/core';
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import '@chatui/core/dist/index.css';
 import './index.less';
 
@@ -90,6 +91,28 @@ export default (): React.ReactNode => {
   // 消息列表
   const { messages, appendMsg, setTyping } = useMessages(initialMessages);
 
+  const {
+    sendJsonMessage
+  } = useWebSocket(
+    'ws://localhost:8199',
+    {
+      onError: (event: any) => console.log(event),
+      onMessage: (event: any) => {
+        const response = JSON.parse(event.data);
+        appendMsg({
+          ...response,
+          position: 'left',
+        })
+      },
+      share: true,
+      //Will attempt to reconnect on all close events, such as server shutting down
+      shouldReconnect: (_closeEvent) => true,
+      reconnectAttempts: 10,
+      reconnectInterval: 3000
+    },
+    true
+  );
+
   // 发送回调
   function handleSend(type: any, val: any) {
     if (type === 'text' && val.trim()) {
@@ -99,16 +122,13 @@ export default (): React.ReactNode => {
         content: { text: val },
         position: 'right',
       });
+      sendJsonMessage({
+        type: 'text',
+        content: { text: val },
+        position: 'right',
+      })
 
       setTyping(true);
-
-      // 模拟回复消息
-      setTimeout(() => {
-        appendMsg({
-          type: 'text',
-          content: { text: '亲，您遇到什么问题啦？请简要描述您的问题~' },
-        });
-      }, 1000);
     }
   }
 
@@ -154,7 +174,7 @@ export default (): React.ReactNode => {
               onChange: page => {
                 console.log(page);
               },
-              pageSize: 3,
+              pageSize: 10,
             }}
             itemLayout="horizontal"
             dataSource={dataSource}
