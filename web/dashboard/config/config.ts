@@ -1,6 +1,7 @@
 // https://umijs.org/config/
 import { defineConfig } from 'umi';
 import { join } from 'path';
+import WindiCSS from 'windicss-webpack-plugin';
 
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
@@ -65,4 +66,7 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
+  chainWebpack: (memo, { env, webpack, createCSSRule  }) => {
+    memo.plugin('windicss').use(WindiCSS);
+  },
 });

@@ -50,5 +50,6 @@ export default {
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
 
-  'menu.conversation': 'Conversation'
+  'menu.conversation': 'Conversation',
+  'menu.account.signin': 'Signin',
 };

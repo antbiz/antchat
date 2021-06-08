@@ -1,13 +1,13 @@
 ﻿export default [
   {
-    name: '404',
+    name: 'exception.not-find',
     path: '/404',
     layout: false,
     hideInMenu: true,
     component: './exception/404',
   },
   {
-    name: 'signin',
+    name: 'account.signin',
     path: '/signin',
     layout: false,
     hideInMenu: true,

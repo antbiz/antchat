@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
+import { List, Result, Comment, Tooltip } from 'antd';
+import { MessageOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import Chat, { Bubble, useMessages } from '@chatui/core';
 import '@chatui/core/dist/index.css';
 import './index.less';
+
+export type Conversation = {
+  id?: string;
+  active?: boolean;
+  avatar?: string;
+  contactName?: string;
+  msg?: string;
+}
 
 const initialMessages = [
   {
@@ -13,7 +23,7 @@ const initialMessages = [
   {
     type: 'image',
     content: {
-      picUrl: '//img.alicdn.com/tfs/TB1p_nirYr1gK0jSZR0XXbP8XXa-300-300.png',
+      picUrl: 'https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png',
     },
   },
 ];
@@ -39,9 +49,44 @@ const defaultQuickReplies = [
   },
 ];
 
+const dataSource = [
+  {
+    id: 'q',
+    contactName: '语雀的天空',
+    avatar:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+    msg: '主人好，我是智能助理，你的贴心小助手~',
+  },
+  {
+    id: 'w',
+    contactName: 'Ant Design',
+    avatar:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+    msg: '主人好，我是智能助理，你的贴心小助手~',
+  },
+  {
+    id: 'e',
+    contactName: '蚂蚁金服体验科技',
+    avatar:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+    msg: '主人好，我是智能助理，你的贴心小助手~',
+  },
+  {
+    id: 't',
+    contactName: 'TechUI',
+    avatar:
+      'https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg',
+    desc: '我是一条测试的描述',
+    msg: '主人好，我是智能助理，你的贴心小助手~',
+  },
+];
 
 export default (): React.ReactNode => {
   const [tab, setTab] = useState('mine');
+  const [activeConversation, setActiveConversation] = useState<String>(dataSource[0].id);
   // 消息列表
   const { messages, appendMsg, setTyping } = useMessages(initialMessages);
 
@@ -103,8 +148,35 @@ export default (): React.ReactNode => {
           },
         }}
       >
-        <ProCard.TabPane key="mine" tab="Mine">
-          Mine
+        <ProCard.TabPane key="mine" tab="Mine" className="conversation-list">
+          <List
+            pagination={{
+              onChange: page => {
+                console.log(page);
+              },
+              pageSize: 3,
+            }}
+            itemLayout="horizontal"
+            dataSource={dataSource}
+            renderItem={item => (
+              <div className={`conversation ${activeConversation === item.id ? 'active': '' }`}
+                onClick={(e) => {
+                  setActiveConversation(item.id)
+                }}
+              >
+                <Comment
+                  author={item.contactName}
+                  avatar={item.avatar}
+                  content={item.msg}
+                  datetime={
+                    <Tooltip title="2 hours ago">
+                      <span>2 hours ago</span>
+                    </Tooltip>
+                  }
+                />
+              </div>
+            )}
+          />
         </ProCard.TabPane>
         <ProCard.TabPane key="unassigned" tab="Unassigned">
           Unassigned
@@ -114,14 +186,23 @@ export default (): React.ReactNode => {
         </ProCard.TabPane>
       </ProCard>
       <ProCard>
-        <Chat
-          navbar={{ title: '匿名用户 127.0.0.1' }}
-          messages={messages}
-          renderMessageContent={renderMessageContent}
-          quickReplies={defaultQuickReplies}
-          onQuickReplyClick={handleQuickReplyClick}
-          onSend={handleSend}
-        />
+        {
+          tab === "all" ? (
+            <Result
+              icon={<MessageOutlined />}
+              title="No Chat!"
+            />
+          ) : (
+            <Chat
+              navbar={{ title: '匿名用户 127.0.0.1' }}
+              messages={messages}
+              renderMessageContent={renderMessageContent}
+              quickReplies={defaultQuickReplies}
+              onQuickReplyClick={handleQuickReplyClick}
+              onSend={handleSend}
+            />
+          )
+        }
       </ProCard>
     </ProCard>
   );
