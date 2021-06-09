@@ -1,8 +1,6 @@
 package ws
 
-import (
-	"sync"
-)
+import "sync"
 
 type Bucket struct {
 	cLock       sync.RWMutex
@@ -21,15 +19,4 @@ func (b *Bucket) Del(uid string) {
 	b.cLock.Lock()
 	delete(b.chs, uid)
 	b.cLock.Unlock()
-}
-
-func GetChannelByUID(uid string) *Channel {
-	if uid == "" {
-		return nil
-	}
-	b := chatSrv.Bucket(uid)
-	b.cLock.RLock()
-	ch := b.chs[uid]
-	b.cLock.RUnlock()
-	return ch
 }

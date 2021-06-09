@@ -33,6 +33,12 @@ func CreateMessage(ctx context.Context, msg *Message) {
 
 func FindMessageByVisitorID(ctx context.Context, id string) ([]*Message, error) {
 	var msgs []*Message
-	err := GetMessageCollection().Find(ctx, bson.M{"contactID": id}).All(&msgs)
+	err := GetMessageCollection().Find(ctx, bson.M{"visitorID": id}).All(&msgs)
 	return msgs, err
+}
+
+func GetLastMessageByVisitorID(ctx context.Context, id string) (*Message, error) {
+	var msg *Message
+	err := GetMessageCollection().Find(ctx, bson.M{"visitorID": id}).Select(bson.M{"createdAt": -1}).One(&msg)
+	return msg, err
 }

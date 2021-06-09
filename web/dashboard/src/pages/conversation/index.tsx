@@ -170,7 +170,8 @@ export default (): React.ReactNode => {
           tab === "all" ? (
             <Result
               icon={<MessageOutlined />}
-              title="No Chat!"
+              title="无选中对话"
+              subTitle="没有需要处理的对话，休息一下吧！"
             />
           ) : (
             <Chat

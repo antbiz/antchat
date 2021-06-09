@@ -34,7 +34,7 @@ func (msgApi) Send(r *ghttp.Request) {
 		Content:    req.Content,
 	})
 
-	ch := ws.GetChannelByUID(req.ReceiverID)
+	ch := ws.VisitorChatSrv().GetChannelByUID(req.ReceiverID)
 	if ch == nil {
 		resp.OK(r, "访客已关闭对话")
 	}

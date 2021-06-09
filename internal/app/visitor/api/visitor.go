@@ -51,7 +51,7 @@ func (visitorApi) Login(r *ghttp.Request) {
 	}
 
 	// 通知客服
-	ch := ws.GetChannelByUID(visitor.AgentID)
+	ch := ws.AgentChatSrv().GetChannelByUID(visitor.AgentID)
 	if ch != nil {
 		err = ch.WriteSystemMessagef("来自 %s 的客户进入对话", visitor.Address())
 		if err != nil {

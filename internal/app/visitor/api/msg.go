@@ -28,7 +28,7 @@ func (msgApi) Send(r *ghttp.Request) {
 		SenderNick: ctxVisitor.Nickname,
 	})
 
-	ch := ws.GetChannelByUID(ctxVisitor.AgentID)
+	ch := ws.AgentChatSrv().GetChannelByUID(ctxVisitor.AgentID)
 	if ch == nil {
 		resp.OK(r, "对方已断开")
 	}

@@ -1,9 +1,9 @@
-package main
+package install
 
 import (
 	"context"
 
-	"github.com/antbiz/antchat/internal/app/admin/service"
+	"github.com/antbiz/antchat/internal/app/system/service"
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/gogf/gf/frame/g"
 	"go.mongodb.org/mongo-driver/bson"

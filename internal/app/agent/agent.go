@@ -16,6 +16,6 @@ func Init() {
 
 		group.GET("/history", api.Msg.History)
 		group.POST("/send", api.Msg.Send)
-		group.GET("/chat", ws.ChatHandler)
+		group.GET("/chat", ws.AgentChatHandler)
 	})
 }

@@ -20,32 +20,37 @@ func (ch *Channel) WriteMessage(msg *ChatMsg) error {
 	if err != nil {
 		return err
 	}
-	return ch.conn.WriteMessage(ghttp.WS_MSG_TEXT, body)
+	select {
+	case ch.send <- body:
+	default:
+	}
+	return nil
+	// return ch.conn.WriteMessage(ghttp.WS_MSG_TEXT, body)
 }
 
 func (ch *Channel) WriteTextMessage(avatar, text string) error {
-	msg := NewChatMsg("text", avatar, g.Map{
+	msg := NewChatMsg(ChatMsgTypeText, avatar, g.Map{
 		"text": text,
 	})
 	return ch.WriteMessage(msg)
 }
 
 func (ch *Channel) WriteTextMessagef(avatar, format string, v ...interface{}) error {
-	msg := NewChatMsg("text", avatar, g.Map{
+	msg := NewChatMsg(ChatMsgTypeText, avatar, g.Map{
 		"text": fmt.Sprintf(format, v...),
 	})
 	return ch.WriteMessage(msg)
 }
 
 func (ch *Channel) WriteSystemMessage(text string) error {
-	msg := NewChatMsg("system", "", g.Map{
+	msg := NewChatMsg(ChatMsgTypeSystem, "", g.Map{
 		"text": text,
 	})
 	return ch.WriteMessage(msg)
 }
 
 func (ch *Channel) WriteSystemMessagef(text string, format string, v ...interface{}) error {
-	msg := NewChatMsg("system", "", g.Map{
+	msg := NewChatMsg(ChatMsgTypeSystem, "", g.Map{
 		"text": fmt.Sprintf(format, v...),
 	})
 	return ch.WriteMessage(msg)

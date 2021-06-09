@@ -22,7 +22,7 @@ type DefaultField struct {
 }
 
 func (DefaultField) CustomFields() field.CustomFieldsBuilder {
-	return field.NewCustom().SetId("id").SetCreateAt("createdAt").SetUpdateAt("updatedAt")
+	return field.NewCustom().SetId("ID").SetCreateAt("CreatedAt").SetUpdateAt("UpdatedAt")
 }
 
 // Cli is mongo client

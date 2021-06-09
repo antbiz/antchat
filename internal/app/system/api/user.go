@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/antbiz/antchat/internal/app/admin/dto"
-	"github.com/antbiz/antchat/internal/app/admin/service"
+	"github.com/antbiz/antchat/internal/app/system/dto"
+	"github.com/antbiz/antchat/internal/app/system/service"
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/gogf/gf/frame/g"
