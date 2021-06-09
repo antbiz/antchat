@@ -42,7 +42,16 @@ func GetUserByID(ctx context.Context, id string) (u *User, err error) {
 	err = GetUserCollection().
 		Find(
 			ctx,
-			bson.M{"id": uid},
+			bson.M{"_id": uid},
+		).One(&u)
+	return
+}
+
+func GetUserByUsername(ctx context.Context, username string) (u *User, err error) {
+	err = GetUserCollection().
+		Find(
+			ctx,
+			bson.M{"username": username},
 		).One(&u)
 	return
 }

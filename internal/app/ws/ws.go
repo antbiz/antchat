@@ -76,7 +76,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 		_ = agentCh.WriteMessage(msg)
 	}
 
-	go visitorChatSrv.writePump(ch)
+	// go visitorChatSrv.writePump(ch)
 	go visitorChatSrv.readPump(ch)
 }
 
@@ -95,6 +95,6 @@ func AgentChatHandler(r *ghttp.Request) {
 	b := agentChatSrv.Bucket(ch.uid)
 	b.Set(ch.uid, ch)
 
-	go agentChatSrv.writePump(ch)
+	// go agentChatSrv.writePump(ch)
 	go agentChatSrv.readPump(ch)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/qiniu/qmgo"
 	"github.com/qiniu/qmgo/field"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -16,9 +17,9 @@ var (
 )
 
 type DefaultField struct {
-	ID        string    `bson:"id"`
-	CreatedAt time.Time `bson:"createdAt"`
-	UpdatedAt time.Time `bson:"updatedAt"`
+	ID        primitive.ObjectID `bson:"_id"`
+	CreatedAt time.Time          `bson:"createdAt"`
+	UpdatedAt time.Time          `bson:"updatedAt"`
 }
 
 func (DefaultField) CustomFields() field.CustomFieldsBuilder {

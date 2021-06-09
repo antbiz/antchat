@@ -18,5 +18,5 @@ DESCRIPTION
 
 // Run .
 func Run() {
-	initAdminAccount()
+	initAdmin()
 }

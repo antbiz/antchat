@@ -20,12 +20,12 @@ func (ch *Channel) WriteMessage(msg *ChatMsg) error {
 	if err != nil {
 		return err
 	}
-	select {
-	case ch.send <- body:
-	default:
-	}
-	return nil
-	// return ch.conn.WriteMessage(ghttp.WS_MSG_TEXT, body)
+	// select {
+	// case ch.send <- body:
+	// default:
+	// }
+	// return nil
+	return ch.conn.WriteMessage(ghttp.WS_MSG_TEXT, body)
 }
 
 func (ch *Channel) WriteTextMessage(avatar, text string) error {

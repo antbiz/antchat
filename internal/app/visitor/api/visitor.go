@@ -8,6 +8,7 @@ import (
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var Visitor = new(visitorApi)
@@ -37,6 +38,9 @@ func (visitorApi) Login(r *ghttp.Request) {
 			resp.DatabaseError(r, "查询访客失败")
 		}
 		visitor.AgentID = storeVisitor.AgentID
+		visitor.ID = storeVisitor.ID
+	} else {
+		visitor.ID = primitive.NewObjectID()
 	}
 
 	selectOneAgent, err := service.SelectAgentID(ctx, visitor.AgentID)
@@ -45,18 +49,19 @@ func (visitorApi) Login(r *ghttp.Request) {
 	}
 	visitor.AgentID = selectOneAgent
 
-	visitorID, err := db.UpsertVisitor(r.Context(), req.VisitorID, visitor)
+	if selectOneAgent != "" {
+		// 通知客服
+		ch := ws.AgentChatSrv().GetChannelByUID(visitor.AgentID)
+		if ch != nil {
+			err = ch.WriteSystemMessagef("来自 %s 的客户进入对话", visitor.Address())
+			if err != nil {
+				g.Log().Async().Errorf("visitor.Login.NoticeAgentVisitorOnline: %v", err)
+			}
+		}
+	}
+	visitorID, err := db.UpsertVisitor(r.Context(), visitor)
 	if err != nil {
 		resp.DatabaseError(r, "保存信息失败")
-	}
-
-	// 通知客服
-	ch := ws.AgentChatSrv().GetChannelByUID(visitor.AgentID)
-	if ch != nil {
-		err = ch.WriteSystemMessagef("来自 %s 的客户进入对话", visitor.Address())
-		if err != nil {
-			g.Log().Async().Errorf("visitor.Login.NoticeAgentVisitorOnline: %v", err)
-		}
 	}
 
 	sessionData := g.Map{
