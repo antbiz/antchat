@@ -10,8 +10,8 @@ import (
 func Init() {
 	s := g.Server()
 
-	s.Group("/api/v1/system", func(group *ghttp.RouterGroup) {
-		group.POST("/login", api.User.LoginByAccount)
+	s.Group("/api/v1", func(group *ghttp.RouterGroup) {
+		group.POST("/account/signin", api.User.SigninByAccount)
 
 		group.Middleware(middleware.Auth)
 		group.GET("/account/info", api.User.GetInfo)

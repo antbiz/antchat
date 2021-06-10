@@ -1,8 +1,8 @@
 package dto
 
-// UserLoginReq 用户登录请求
-type UserLoginReq struct {
-	Login    string `v:"required#请输入用户名/手机号/邮箱"` // 支持用户名/手机号/邮箱
+// UserSigninReq 用户登录请求
+type UserSigninReq struct {
+	Account  string `v:"required#请输入用户名/手机号/邮箱"` // 支持用户名/手机号/邮箱
 	Password string `v:"required#请输入密码"`
 }
 

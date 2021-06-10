@@ -2,9 +2,9 @@
 /* eslint-disable */
 import { request } from 'umi';
 
-/** 登录接口 POST /api/account/signin */
+/** 登录接口 POST /api/v1/account/signin */
 export async function signin(body: API.SigninRequest, options?: { [key: string]: any }) {
-  return request<API.SigninReply>('/api/account/signin', {
+  return request<API.SigninReply>('/api/v1/account/signin', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -14,25 +14,26 @@ export async function signin(body: API.SigninRequest, options?: { [key: string]:
   });
 }
 
-/** 退出登录接口 POST /api/account/logout */
+/** 退出登录接口 POST /api/v1/account/logout */
 export async function logout(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/account/logout', {
+  return request<Record<string, any>>('/api/v1/account/logout', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 获取当前的用户 GET /api/currentUser */
+/** 获取当前的用户 GET /api/v1/account/info */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<API.CurrentUser>('/api/user/info', {
+  return request<API.CurrentUser>('/api/v1/account/info', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 此处后端没有提供注释 GET /api/notices */
+// TODO: 后端未实现
+/** 获取通知 GET /api/notices */
 export async function getNotices(options?: { [key: string]: any }) {
-  return request<API.NoticeIconList>('/api/user/notices', {
+  return request<API.NoticeIconList>('/api/v1/account/notices', {
     method: 'GET',
     ...(options || {}),
   });

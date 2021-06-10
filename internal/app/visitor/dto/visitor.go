@@ -1,6 +1,6 @@
 package dto
 
-type VisitorLoginReq struct {
+type VisitorSigninReq struct {
 	Captcha   string `json:"captcha" v:"required"`
 	Domain    string `json:"domain" v:"required"`
 	Geo       string `json:"geo"`

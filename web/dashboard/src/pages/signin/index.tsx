@@ -95,13 +95,13 @@ const Signin: React.FC = () => {
             }}
           >
             <ProFormText
-              name="login"
+              name="account"
               fieldProps={{
                 size: 'large',
                 prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
               placeholder={intl.formatMessage({
-                id: 'pages.signin.login.placeholder',
+                id: 'pages.signin.account.placeholder',
                 defaultMessage: '用户名: admin or user',
               })}
               rules={[
@@ -109,7 +109,7 @@ const Signin: React.FC = () => {
                   required: true,
                   message: (
                     <FormattedMessage
-                      id="pages.signin.login.required"
+                      id="pages.signin.account.required"
                       defaultMessage="请输入账号!"
                     />
                   ),

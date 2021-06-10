@@ -15,9 +15,9 @@ var Visitor = new(visitorApi)
 
 type visitorApi struct{}
 
-// Login 访客登录
-func (visitorApi) Login(r *ghttp.Request) {
-	var req *dto.VisitorLoginReq
+// Signin 访客登录
+func (visitorApi) Signin(r *ghttp.Request) {
+	var req *dto.VisitorSigninReq
 	if err := r.Parse(&req); err != nil {
 		resp.InvalidArgument(r, err.Error())
 	}
@@ -45,7 +45,7 @@ func (visitorApi) Login(r *ghttp.Request) {
 
 	selectOneAgent, err := service.SelectAgentID(ctx, visitor.AgentID)
 	if err != nil {
-		g.Log().Async().Errorf("visitor.Login.SelectAgentID: %v", err)
+		g.Log().Async().Errorf("visitor.Signin.SelectAgentID: %v", err)
 	}
 	visitor.AgentID = selectOneAgent
 
@@ -55,7 +55,7 @@ func (visitorApi) Login(r *ghttp.Request) {
 		if ch != nil {
 			err = ch.WriteSystemMessagef("来自 %s 的客户进入对话", visitor.Address())
 			if err != nil {
-				g.Log().Async().Errorf("visitor.Login.NoticeAgentVisitorOnline: %v", err)
+				g.Log().Async().Errorf("visitor.Signin.NoticeAgentVisitorOnline: %v", err)
 			}
 		}
 	}

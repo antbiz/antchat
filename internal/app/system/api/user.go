@@ -15,14 +15,14 @@ var User = &userApi{}
 
 type userApi struct{}
 
-// LoginByAccount 用户账号（用户名/手机号/邮箱）登录
-func (userApi) LoginByAccount(r *ghttp.Request) {
-	var req *dto.UserLoginReq
+// SigninByAccount 用户账号（用户名/手机号/邮箱）登录
+func (userApi) SigninByAccount(r *ghttp.Request) {
+	var req *dto.UserSigninReq
 	if err := r.Parse(&req); err != nil {
 		resp.InvalidArgument(r, err.Error())
 	}
 
-	user, err := db.GetUserByLogin(r.Context(), req.Login)
+	user, err := db.GetUserBySignin(r.Context(), req.Account)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.NotFound(r, "account_not_found", "该账号尚未注册")

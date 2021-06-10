@@ -25,7 +25,7 @@ func GetUserCollection() *qmgo.Collection {
 	return DB().Collection("user")
 }
 
-func GetUserByLogin(ctx context.Context, login string) (u *User, err error) {
+func GetUserBySignin(ctx context.Context, login string) (u *User, err error) {
 	err = GetUserCollection().
 		Find(
 			ctx,
