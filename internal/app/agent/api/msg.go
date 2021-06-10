@@ -1,6 +1,8 @@
 package api
 
 import (
+	"context"
+
 	"github.com/antbiz/antchat/internal/app/agent/dto"
 	"github.com/antbiz/antchat/internal/app/ws"
 	"github.com/antbiz/antchat/internal/db"
@@ -25,13 +27,13 @@ func (msgApi) Send(r *ghttp.Request) {
 
 	req.SenderID = ctxUser.ID
 	req.SenderNick = ctxUser.Nickname
-	go db.CreateMessage(ctx, &db.Message{
+	go db.CreateMessage(context.Background(), &db.Message{
 		AgentID:    req.SenderID,
 		VisitorID:  req.ReceiverID,
 		SenderID:   req.SenderID,
-		SenderRole: req.SenderRole,
 		SenderNick: req.SenderNick,
 		Content:    req.Content,
+		Type:       req.Type,
 	})
 
 	ch := ws.VisitorChatSrv().GetChannelByUID(req.ReceiverID)
@@ -59,4 +61,14 @@ func (msgApi) History(r *ghttp.Request) {
 		resp.DatabaseError(r, "拉取消息失败")
 	}
 	resp.PageOK(r, 0, msgs)
+}
+
+// Conversations 拉取对话列表
+func (msgApi) Conversations(r *ghttp.Request) {
+	// TODO: 仅拉取当前客服的对话列表
+	res, err := ws.GetRealtimeConversations(r.Context())
+	if err != nil {
+		resp.InternalServer(r, "err_get_conversations", "拉取对话列表失败", err)
+	}
+	resp.OK(r, res)
 }

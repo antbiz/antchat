@@ -1,6 +1,8 @@
 package api
 
 import (
+	"context"
+
 	"github.com/antbiz/antchat/internal/app/ws"
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/antbiz/antchat/internal/pkg/resp"
@@ -24,11 +26,15 @@ func (msgApi) Send(r *ghttp.Request) {
 
 	ctx := r.Context()
 	ctxVisitor := shared.Ctx.GetCtxVisitor(ctx)
-	// FIXME: db.CreateMessage: connection(localhost:27017[-4]) failed to write: context canceled
-	// go db.CreateMessage(ctx, &db.Message{
-	// 	SenderID:   ctxVisitor.ID,
-	// 	SenderNick: ctxVisitor.Nickname,
-	// })
+	// FIXME: 用ctx会报错：db.CreateMessage: connection(localhost:27017[-4]) failed to write: context canceled
+	go db.CreateMessage(context.Background(), &db.Message{
+		AgentID:    ctxVisitor.AgentID,
+		VisitorID:  ctxVisitor.ID,
+		SenderID:   ctxVisitor.ID,
+		SenderNick: ctxVisitor.Nickname,
+		Content:    req.Content,
+		Type:       req.Type,
+	})
 
 	g.Log().Async().Debugf("获取访客 %s session信息中的客服id：%s", ctxVisitor.ID, ctxVisitor.AgentID)
 	ch := ws.AgentChatSrv().GetChannelByUID(ctxVisitor.AgentID)

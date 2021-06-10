@@ -14,7 +14,6 @@ type Message struct {
 	AgentID      string      `bson:"agentID"`    // 客服ID
 	VisitorID    string      `bson:"visitorID"`  // 访客ID
 	SenderID     string      `bson:"senderID"`   // 发送者ID
-	SenderRole   int         `bson:"senderRole"` // 发送者类型
 	SenderNick   string      `bson:"senderNick"` // 发送者昵称
 	Type         string      `bson:"type"`       // 消息类型
 	Content      interface{} `bson:"content"`    // 消息内容
@@ -41,4 +40,19 @@ func GetLastMessageByVisitorID(ctx context.Context, id string) (*Message, error)
 	var msg *Message
 	err := GetMessageCollection().Find(ctx, bson.M{"visitorID": id}).Select(bson.M{"createdAt": -1}).One(&msg)
 	return msg, err
+}
+
+func GetLastMessagesByVisitorIDs(ctx context.Context, ids []string) ([]*Message, error) {
+	matchStage := bson.D{{"$match", []bson.E{{"visitorID", bson.D{{"$in", ids}}}}}}
+	groupStage := bson.D{{"$group", bson.D{{"_id", "$visitorID"}}}}
+	sortState := bson.D{{"$sort", bson.M{"createdAt": -1}}}
+	msgs := make([]*Message, 0)
+
+	err := GetMessageCollection().
+		Aggregate(
+			ctx,
+			qmgo.Pipeline{matchStage, groupStage, sortState},
+		).
+		All(&msgs)
+	return msgs, err
 }
