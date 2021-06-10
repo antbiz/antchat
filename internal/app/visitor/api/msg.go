@@ -37,12 +37,17 @@ func (msgApi) Send(r *ghttp.Request) {
 	})
 
 	g.Log().Async().Debugf("获取访客 %s session信息中的客服id：%s", ctxVisitor.ID, ctxVisitor.AgentID)
-	ch := ws.AgentChatSrv().GetChannelByUID(ctxVisitor.AgentID)
-	if ch == nil {
-		resp.OK(r, "对方已断开")
-	}
-	if err := ch.WriteMessage(req); err != nil {
-		resp.InternalServer(r, "err_ws_write_msg", "发送失败")
+	ach := ws.AgentChatSrv().GetChannelByUID(ctxVisitor.AgentID)
+	// TODO: 未被接待的访客放到队列等待分配
+	if ach != nil {
+		if err := ach.WriteMessage(req); err != nil {
+			resp.InternalServer(r, "err_ws_write_msg", "发送失败")
+		}
+	} else {
+		vch := ws.VisitorChatSrv().GetChannelByUID(ctxVisitor.ID)
+		if vch != nil {
+			_ = vch.WriteSystemMessage("当前客服繁忙，请您耐心等待！")
+		}
 	}
 	resp.OK(r)
 }

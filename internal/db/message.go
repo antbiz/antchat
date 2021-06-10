@@ -11,13 +11,13 @@ import (
 // Message 消息
 type Message struct {
 	DefaultField `bson:",inline"`
-	AgentID      string      `bson:"agentID"`    // 客服ID
-	VisitorID    string      `bson:"visitorID"`  // 访客ID
-	SenderID     string      `bson:"senderID"`   // 发送者ID
-	SenderNick   string      `bson:"senderNick"` // 发送者昵称
-	Type         string      `bson:"type"`       // 消息类型
-	Content      interface{} `bson:"content"`    // 消息内容
-	Status       int         `bson:"status"`     // 消息状态
+	AgentID      string                 `bson:"agentID"`    // 客服ID
+	VisitorID    string                 `bson:"visitorID"`  // 访客ID
+	SenderID     string                 `bson:"senderID"`   // 发送者ID
+	SenderNick   string                 `bson:"senderNick"` // 发送者昵称
+	Type         string                 `bson:"type"`       // 消息类型
+	Content      map[string]interface{} `bson:"content"`    // 消息内容
+	Status       int                    `bson:"status"`     // 消息状态
 }
 
 func GetMessageCollection() *qmgo.Collection {
@@ -43,15 +43,21 @@ func GetLastMessageByVisitorID(ctx context.Context, id string) (*Message, error)
 }
 
 func GetLastMessagesByVisitorIDs(ctx context.Context, ids []string) ([]*Message, error) {
-	matchStage := bson.D{{"$match", []bson.E{{"visitorID", bson.D{{"$in", ids}}}}}}
-	groupStage := bson.D{{"$group", bson.D{{"_id", "$visitorID"}}}}
 	sortState := bson.D{{"$sort", bson.M{"createdAt": -1}}}
+	matchStage := bson.D{{"$match", []bson.E{{"visitorID", bson.D{{"$in", ids}}}}}}
+	groupStage := bson.D{{"$group", bson.D{
+		{"_id", "$visitorID"},
+		{"doc", bson.M{"$first": "$$ROOT"}},
+	}}}
+	// https://stackoverflow.com/a/59756228
+	replaceState := bson.D{{"$replaceRoot", bson.M{"newRoot": "$doc"}}}
+
 	msgs := make([]*Message, 0)
 
 	err := GetMessageCollection().
 		Aggregate(
 			ctx,
-			qmgo.Pipeline{matchStage, groupStage, sortState},
+			qmgo.Pipeline{sortState, matchStage, groupStage, replaceState},
 		).
 		All(&msgs)
 	return msgs, err

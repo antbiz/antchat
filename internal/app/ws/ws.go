@@ -57,12 +57,12 @@ func VisitorChatHandler(r *ghttp.Request) {
 	agentCh := agentChatSrv.GetChannelByUID(ch.sess.GetString("agentID"))
 	if agentCh != nil {
 		var (
-			lastMsgContent interface{}
+			lastMsgContent map[string]interface{}
 			activeAt       time.Time
 		)
 		lastMsg, _ := db.GetLastMessageByVisitorID(ctx, ctxVisitor.ID)
 		if lastMsg == nil {
-			lastMsgContent = ""
+			lastMsgContent = nil
 			activeAt = gtime.Now().Time
 		} else {
 			lastMsgContent = lastMsg.Content

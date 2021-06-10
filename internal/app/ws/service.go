@@ -5,14 +5,15 @@ import (
 	"time"
 
 	"github.com/antbiz/antchat/internal/db"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gtime"
 )
 
 type Conversation struct {
-	VisitorID string      `json:"id"`
-	Nickname  string      `json:"nickname"`
-	Message   interface{} `json:"message"`
-	ActiveAt  time.Time   `json:"activeAt"`
+	VisitorID string                 `json:"id"`
+	Nickname  string                 `json:"nickname"`
+	Message   map[string]interface{} `json:"message"`
+	ActiveAt  time.Time              `json:"activeAt"`
 }
 
 // GetRealtimeConversations 获取当前所有对话
@@ -34,7 +35,7 @@ func GetRealtimeConversations(ctx context.Context) ([]*Conversation, error) {
 	if err != nil {
 		return nil, err
 	}
-	visitorMsgs := make(map[string]*db.Message, len(onlineVisitorIDs))
+	visitorMsgs := make(map[string]*db.Message, len(msgs))
 	for _, msg := range msgs {
 		visitorMsgs[msg.VisitorID] = msg
 	}
@@ -48,8 +49,10 @@ func GetRealtimeConversations(ctx context.Context) ([]*Conversation, error) {
 			conversations[i] = &Conversation{
 				VisitorID: vid,
 				Nickname:  visitorNicks[vid],
-				Message:   "",
-				ActiveAt:  gtime.Now().Time,
+				Message: g.Map{
+					"text": "新访客",
+				},
+				ActiveAt: gtime.Now().Time,
 			}
 		} else {
 			conversations[i] = &Conversation{
