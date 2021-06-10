@@ -56,7 +56,7 @@ func (msgApi) History(r *ghttp.Request) {
 
 	ctx := r.Context()
 
-	msgs, err := db.FindMessageByVisitorID(ctx, req.VisitorID)
+	msgs, err := db.FindMessageByVisitorIDWithPaging(ctx, req.VisitorID, req.PageNum, req.PageSize)
 	if err != nil {
 		resp.DatabaseError(r, "拉取消息失败")
 	}

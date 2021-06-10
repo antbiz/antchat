@@ -50,7 +50,6 @@ func VisitorChatHandler(r *ghttp.Request) {
 	}
 	b := visitorChatSrv.Bucket(ch.uid)
 	b.Set(ch.uid, ch)
-	g.Log().Async().Debugf("访客 %s 已连接", ch.uid)
 
 	// 新访客加入，通知客服
 	g.Log().Async().Debugf("通知客服 %s, 访客 %s 已连接", ch.sess.GetString("agentID"), ch.uid)

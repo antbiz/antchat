@@ -13,17 +13,17 @@ import (
 // Visitor 访客
 type Visitor struct {
 	DefaultField `bson:",inline"`
-	Domain       string `bson:"domain"`
-	Refer        string `bson:"refer"`
-	Token        string `bson:"token"`
-	Nickname     string `bson:"nickname"`
-	Email        string `bson:"email"`
-	Phone        string `bson:"phone"`
-	Geo          string `bson:"geo"`
-	IP           string `bson:"ip"`
-	Country      string `bson:"country"`
-	City         string `bson:"city"`
-	AgentID      string `bons:"agentID"`
+	Domain       string `bson:"domain" json:"domain"`
+	Refer        string `bson:"refer" json:"refer"`
+	Token        string `bson:"token" json:"token"`
+	Nickname     string `bson:"nickname" json:"nickname"`
+	Email        string `bson:"email" json:"email"`
+	Phone        string `bson:"phone" json:"phone"`
+	Geo          string `bson:"geo" json:"geo"`
+	IP           string `bson:"ip" json:"ip"`
+	Country      string `bson:"country" json:"country"`
+	City         string `bson:"city" json:"city"`
+	AgentID      string `bons:"agentID" json:"agentID"`
 }
 
 func (visitor *Visitor) Address() string {

@@ -11,13 +11,13 @@ import (
 // Message 消息
 type Message struct {
 	DefaultField `bson:",inline"`
-	AgentID      string                 `bson:"agentID"`    // 客服ID
-	VisitorID    string                 `bson:"visitorID"`  // 访客ID
-	SenderID     string                 `bson:"senderID"`   // 发送者ID
-	SenderNick   string                 `bson:"senderNick"` // 发送者昵称
-	Type         string                 `bson:"type"`       // 消息类型
-	Content      map[string]interface{} `bson:"content"`    // 消息内容
-	Status       int                    `bson:"status"`     // 消息状态
+	AgentID      string                 `bson:"agentID" json:"agentID"`       // 客服ID
+	VisitorID    string                 `bson:"visitorID" json:"visitorID"`   // 访客ID
+	SenderID     string                 `bson:"senderID" json:"senderID"`     // 发送者ID
+	SenderNick   string                 `bson:"senderNick" json:"senderNick"` // 发送者昵称
+	Type         string                 `bson:"type" json:"type"`             // 消息类型
+	Content      map[string]interface{} `bson:"content" json:"content"`       // 消息内容
+	Status       int                    `bson:"status" json:"status"`         // 消息状态
 }
 
 func GetMessageCollection() *qmgo.Collection {
@@ -33,6 +33,12 @@ func CreateMessage(ctx context.Context, msg *Message) {
 func FindMessageByVisitorID(ctx context.Context, id string) ([]*Message, error) {
 	var msgs []*Message
 	err := GetMessageCollection().Find(ctx, bson.M{"visitorID": id}).All(&msgs)
+	return msgs, err
+}
+
+func FindMessageByVisitorIDWithPaging(ctx context.Context, id string, pageNum, pageSize int64) ([]*Message, error) {
+	var msgs []*Message
+	err := GetMessageCollection().Find(ctx, bson.M{"visitorID": id}).Skip((pageNum - 1) * pageSize).Limit(pageSize).All(&msgs)
 	return msgs, err
 }
 

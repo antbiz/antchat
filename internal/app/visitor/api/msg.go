@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 
+	"github.com/antbiz/antchat/internal/app/visitor/dto"
 	"github.com/antbiz/antchat/internal/app/ws"
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/antbiz/antchat/internal/pkg/resp"
@@ -54,10 +55,15 @@ func (msgApi) Send(r *ghttp.Request) {
 
 // History 拉取消息列表
 func (msgApi) History(r *ghttp.Request) {
+	var req *dto.PullMsgReq
+	if err := r.Parse(&req); err != nil {
+		resp.InvalidArgument(r, err.Error())
+	}
+
 	ctx := r.Context()
 	ctxVisitor := shared.Ctx.GetCtxVisitor(ctx)
 
-	msgs, err := db.FindMessageByVisitorID(ctx, ctxVisitor.ID)
+	msgs, err := db.FindMessageByVisitorIDWithPaging(ctx, ctxVisitor.ID, req.PageNum, req.PageSize)
 	if err != nil {
 		resp.DatabaseError(r, "拉取消息失败")
 	}

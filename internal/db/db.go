@@ -17,9 +17,9 @@ var (
 )
 
 type DefaultField struct {
-	ID        primitive.ObjectID `bson:"_id"`
-	CreatedAt time.Time          `bson:"createdAt"`
-	UpdatedAt time.Time          `bson:"updatedAt"`
+	ID        primitive.ObjectID `bson:"_id" json:"_id"`
+	CreatedAt time.Time          `bson:"createdAt" json:"createdAt"`
+	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt"`
 }
 
 func (DefaultField) CustomFields() field.CustomFieldsBuilder {

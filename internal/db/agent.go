@@ -12,10 +12,10 @@ import (
 // Agent 客服
 type Agent struct {
 	DefaultField `bson:",inline"`
-	UserID       string `bson:"userID"`
-	Status       int    `bson:"status"`
-	Online       bool   `bson:"online"`
-	Blocked      bool   `bson:"blocked"`
+	UserID       string `bson:"userID" json:"userID"`
+	Status       int    `bson:"status" json:"status"`
+	Online       bool   `bson:"online" json:"online"`
+	Blocked      bool   `bson:"blocked" json:"blocked"`
 }
 
 func GetAgentCollection() *qmgo.Collection {
