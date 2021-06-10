@@ -16,7 +16,9 @@ var (
 )
 
 func init() {
+	g.Log().Async().Debug("初始化访客websocket服务")
 	visitorChatSrv = NewServer()
+	g.Log().Async().Debug("初始化客服websocket服务")
 	agentChatSrv = NewServer()
 }
 
@@ -47,8 +49,10 @@ func VisitorChatHandler(r *ghttp.Request) {
 	}
 	b := visitorChatSrv.Bucket(ch.uid)
 	b.Set(ch.uid, ch)
+	g.Log().Async().Debugf("访客 %s 已连接", ch.uid)
 
 	// 新访客加入，通知客服
+	g.Log().Async().Debugf("通知客服 %s, 访客 %s 已连接", ch.sess.GetString("agentID"), ch.uid)
 	agentCh := agentChatSrv.GetChannelByUID(ch.sess.GetString("agentID"))
 	if agentCh != nil {
 		var (
@@ -73,7 +77,9 @@ func VisitorChatHandler(r *ghttp.Request) {
 			},
 			"code": "incoming_update",
 		})
-		_ = agentCh.WriteMessage(msg)
+		if err = agentCh.WriteMessage(msg); err != nil {
+			g.Log().Async().Errorf("通知客服 %s 失败: %v", ch.sess.GetString("agentID"), err)
+		}
 	}
 
 	// go visitorChatSrv.writePump(ch)
@@ -87,13 +93,15 @@ func AgentChatHandler(r *ghttp.Request) {
 		return
 	}
 
+	// NOTE: 客服的uid使用客服会话中的客服id，和访客保持一致
 	ch := &Channel{
-		uid:  r.Session.GetString("id"),
+		uid:  r.Session.GetString("agentID"),
 		conn: ws,
 		sess: r.Session,
 	}
 	b := agentChatSrv.Bucket(ch.uid)
 	b.Set(ch.uid, ch)
+	g.Log().Async().Debugf("客服 %s 已连接", ch.uid)
 
 	// go agentChatSrv.writePump(ch)
 	go agentChatSrv.readPump(ch)

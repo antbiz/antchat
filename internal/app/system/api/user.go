@@ -34,8 +34,14 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 		resp.Unauthorized(r, "incorrect_password", "密码错误")
 	}
 
+	var agentID string
+	if agent, _ := db.GetAgentByUID(r.Context(), user.ID.Hex()); agent != nil {
+		agentID = agent.ID.Hex()
+	}
+
 	sessionData := g.Map{
-		"id":       user.ID,
+		"id":       user.ID.Hex(),
+		"agentID":  agentID,
 		"username": user.Username,
 		"nickname": user.Nickname,
 		"phone":    user.Phone,

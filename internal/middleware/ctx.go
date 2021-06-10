@@ -29,6 +29,7 @@ func CtxVisitor(r *ghttp.Request) {
 	if sessionUserID := r.Session.GetString("id"); sessionUserID != "" {
 		shared.Ctx.InitCtxVisitor(r, &types.ContextVisitor{
 			ID:       sessionUserID,
+			AgentID:  r.Session.GetString("agentID"),
 			Nickname: r.Session.GetString("nickname"),
 			Language: r.Session.GetString("language"),
 		})

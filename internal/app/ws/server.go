@@ -42,6 +42,7 @@ func NewServer() *Server {
 
 func (srv *Server) Bucket(uid string) *Bucket {
 	idx := cityhash.CityHash32([]byte(uid), uint32(len(uid))) % srv.bucketIdx
+	g.Log().Async().Debugf("%s his channel bucket index: %d use cityhash", uid, idx)
 	return srv.Buckets[idx]
 }
 

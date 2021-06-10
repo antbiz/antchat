@@ -5,6 +5,7 @@ import (
 	"github.com/antbiz/antchat/internal/db"
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/antbiz/antchat/internal/shared"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gtime"
 )
@@ -23,11 +24,13 @@ func (msgApi) Send(r *ghttp.Request) {
 
 	ctx := r.Context()
 	ctxVisitor := shared.Ctx.GetCtxVisitor(ctx)
-	go db.CreateMessage(ctx, &db.Message{
-		SenderID:   ctxVisitor.ID,
-		SenderNick: ctxVisitor.Nickname,
-	})
+	// FIXME: db.CreateMessage: connection(localhost:27017[-4]) failed to write: context canceled
+	// go db.CreateMessage(ctx, &db.Message{
+	// 	SenderID:   ctxVisitor.ID,
+	// 	SenderNick: ctxVisitor.Nickname,
+	// })
 
+	g.Log().Async().Debugf("获取访客 %s session信息中的客服id：%s", ctxVisitor.ID, ctxVisitor.AgentID)
 	ch := ws.AgentChatSrv().GetChannelByUID(ctxVisitor.AgentID)
 	if ch == nil {
 		resp.OK(r, "对方已断开")

@@ -42,7 +42,7 @@ func GetVisitorByID(ctx context.Context, id string) (visitor *Visitor, err error
 	err = GetVisitorCollection().
 		Find(
 			ctx,
-			bson.M{"id": vid},
+			bson.M{"_id": vid},
 		).One(&visitor)
 	return
 }
