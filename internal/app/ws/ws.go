@@ -46,6 +46,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 		uid:  ctxVisitor.ID,
 		conn: ws,
 		sess: r.Session,
+		send: make(chan []byte, visitorChatSrv.BufSize),
 	}
 	b := visitorChatSrv.Bucket(ch.uid)
 	b.Set(ch.uid, ch)
@@ -82,7 +83,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 		}
 	}
 
-	// go visitorChatSrv.writePump(ch)
+	go visitorChatSrv.writePump(ch)
 	go visitorChatSrv.readPump(ch)
 }
 
@@ -98,11 +99,12 @@ func AgentChatHandler(r *ghttp.Request) {
 		uid:  r.Session.GetString("agentID"),
 		conn: ws,
 		sess: r.Session,
+		send: make(chan []byte, agentChatSrv.BufSize),
 	}
 	b := agentChatSrv.Bucket(ch.uid)
 	b.Set(ch.uid, ch)
 	g.Log().Async().Debugf("客服 %s 已连接", ch.uid)
 
-	// go agentChatSrv.writePump(ch)
+	go agentChatSrv.writePump(ch)
 	go agentChatSrv.readPump(ch)
 }

@@ -24,7 +24,7 @@ func NewServer() *Server {
 	srv := &Server{
 		WriteWait:  10 * time.Second,
 		PongWait:   60 * time.Second,
-		PingPeriod: (60 * 9) / 10,
+		PingPeriod: (60 * time.Second * 9) / 10,
 		MaxMsgSize: 512,
 		BufSize:    256,
 	}
@@ -71,10 +71,18 @@ func (srv *Server) readPump(ch *Channel) {
 		_ = ch.conn.Close()
 		// 如果访客离开对话需要通知客服
 		if ch.sess.GetBool("isVisitor") {
+			g.Log().Async().Debugf("访客 %s 关闭ws连接, 通知客服 %s", ch.uid, ch.sess.GetString("agentID"))
 			agentCh := agentChatSrv.GetChannelByUID(ch.sess.GetString("agentID"))
 			if agentCh != nil {
-				_ = agentCh.WriteSystemMessagef("客户 %s 关闭对话", ch.sess.GetString("nickname"))
+				if err := agentCh.WriteSystemMessagef("客户 %s 关闭对话", ch.sess.GetString("nickname")); err != nil {
+					g.Log().Async().Errorf("通知客服 %s 访客 %s 关闭对话：%v", ch.sess.GetString("agentID"), ch.uid, err)
+				}
+			} else {
+				g.Log().Debugf("无法获取客服 %s 的回话", ch.sess.GetString("agentID"))
 			}
+
+		} else {
+			g.Log().Async().Debugf("客服 %s 关闭ws连接", ch.uid)
 		}
 	}()
 
@@ -130,9 +138,9 @@ func (srv *Server) writePump(ch *Channel) {
 				return
 			}
 		case <-ticker.C:
+			g.Log().Async().Debug("websocket ping....")
 			ch.conn.SetWriteDeadline(time.Now().Add(srv.WriteWait))
 			if err := ch.conn.WriteMessage(ghttp.WS_MSG_PING, nil); err != nil {
-				g.Log().Async().Errorf("ch.conn.PingMessage: %v", err)
 				return
 			}
 		}

@@ -18,14 +18,11 @@ type Channel struct {
 func (ch *Channel) WriteMessage(msg *ChatMsg) error {
 	body, err := json.Marshal(msg)
 	if err != nil {
+		g.Log().Async().Errorf("ws.channel.WriteMessage.json.Marshal: %v", err)
 		return err
 	}
-	// select {
-	// case ch.send <- body:
-	// default:
-	// }
-	// return nil
-	return ch.conn.WriteMessage(ghttp.WS_MSG_TEXT, body)
+	ch.send <- body
+	return nil
 }
 
 func (ch *Channel) WriteTextMessage(avatar, text string) error {
