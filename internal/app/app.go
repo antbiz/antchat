@@ -10,7 +10,7 @@ import (
 
 func Run() {
 	s := g.Server()
-	s.Use(middleware.CORS)
+	s.Use(middleware.CORS, middleware.Sid)
 
 	system.Init()
 	agent.Init()
