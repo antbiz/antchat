@@ -11,6 +11,7 @@ func CtxUser(r *ghttp.Request) {
 	if sessionUserID := r.Session.GetString("id"); sessionUserID != "" {
 		shared.Ctx.InitCtxUser(r, &types.ContextUser{
 			ID:       sessionUserID,
+			AgentID:  r.Session.GetString("agentID"),
 			Username: r.Session.GetString("username"),
 			Phone:    r.Session.GetString("phone"),
 			Email:    r.Session.GetString("email"),

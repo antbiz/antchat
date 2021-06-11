@@ -52,7 +52,8 @@ func VisitorChatHandler(r *ghttp.Request) {
 	b.Set(ch.uid, ch)
 
 	// 新访客加入，通知客服
-	g.Log().Async().Debugf("通知客服 %s, 访客 %s 已连接", ch.sess.GetString("agentID"), ch.uid)
+	aid := ch.sess.GetString("agentID")
+	g.Log().Async().Debugf("通知客服 %s, 访客 %s 已连接", aid, ch.uid)
 	agentCh := agentChatSrv.GetChannelByUID(ch.sess.GetString("agentID"))
 	if agentCh != nil {
 		var (
@@ -68,7 +69,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 			activeAt = lastMsg.CreatedAt
 		}
 
-		msg := NewChatMsg(ChatMsgTypeSystem, "", g.Map{
+		msg := NewChatMsg(aid, ch.uid, "", ChatMsgTypeSystem, g.Map{
 			"data": &Conversation{
 				VisitorID: ctxVisitor.ID,
 				Nickname:  ctxVisitor.Nickname,

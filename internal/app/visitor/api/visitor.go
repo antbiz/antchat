@@ -53,7 +53,7 @@ func (visitorApi) Signin(r *ghttp.Request) {
 		// 通知客服
 		ch := ws.AgentChatSrv().GetChannelByUID(visitor.AgentID)
 		if ch != nil {
-			err = ch.WriteSystemMessagef("来自 %s 的客户进入对话", visitor.Address())
+			err = ch.WriteSystemMessagef(visitor.AgentID, req.VisitorID, "来自 %s 的客户进入对话", visitor.Address())
 			if err != nil {
 				g.Log().Async().Errorf("visitor.Signin.NoticeAgentVisitorOnline: %v", err)
 			}

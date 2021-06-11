@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { List, Result, Comment, Tooltip } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import Chat, { Bubble, useMessages } from '@chatui/core';
 import useWebSocket from "react-use-websocket";
 import moment from 'moment';
-import { getChatHistory, sendMsg } from '@/services/agent';
+import { getChatHistory, getConversations, sendMsg } from '@/services/agent';
 import { getApiSid } from '@/utils/authority';
 import '@chatui/core/dist/index.css';
 import './index.less';
@@ -23,7 +23,7 @@ const defaultQuickReplies = [
 ];
 
 export default (): React.ReactNode => {
-  const [conversations, setSonversations] = useState<API.Conversation[]>();
+  const [conversations, setSonversations] = useState<API.Conversation[]>([]);
   const [activeConversation, setActiveConversation] = useState<API.Conversation>();
   // 消息列表
   const { messages, appendMsg, setTyping, resetList } = useMessages();
@@ -40,7 +40,8 @@ export default (): React.ReactNode => {
         const response = JSON.parse(event.data);
         console.log("recevied: ", response);
         if (response.type === "cmd" && response.content && response.content.code === "incoming_update") {
-          setSonversations(response.content.list);
+          conversations.push(response.content.data);
+          setSonversations(conversations);
         } else if (response.visitorID === activeConversation?.id) {
           appendMsg({
             ...response,
@@ -74,8 +75,7 @@ export default (): React.ReactNode => {
     } catch (e) {
       // do nothing
     }
-    setTyping(true);
-
+    // setTyping(true);
   };
 
   // 快捷短语回调，可根据 item 数据做出不同的操作，这里以发送文本消息为例
@@ -106,12 +106,24 @@ export default (): React.ReactNode => {
     setChatBoxLoading(true);
     try {
       const historyMsgList = await getChatHistory(item.id);
-      resetList(historyMsgList);
+      // resetList(historyMsgList);
     } catch (e) {
       // do nothing
     }
     setChatBoxLoading(false);
-  }
+  };
+
+  const fetchConversations = async () => {
+    const data = await getConversations();
+    setSonversations(data || []);
+    if (data) {
+      handleSwitchConversation(data[0]);
+    };
+  };
+
+  useEffect(() => {
+    fetchConversations();
+  }, []);
 
   return (
     <ProCard split="vertical">

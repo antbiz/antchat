@@ -28,7 +28,7 @@ func (msgApi) Send(r *ghttp.Request) {
 	req.SenderID = ctxUser.ID
 	req.SenderNick = ctxUser.Nickname
 	go db.CreateMessage(context.Background(), &db.Message{
-		AgentID:    req.SenderID,
+		AgentID:    ctxUser.AgentID,
 		VisitorID:  req.ReceiverID,
 		SenderID:   req.SenderID,
 		SenderNick: req.SenderNick,
@@ -41,7 +41,7 @@ func (msgApi) Send(r *ghttp.Request) {
 		resp.OK(r, "访客已关闭对话")
 	}
 
-	if err := ch.WriteMessage(ws.NewChatMsg(req.Type, ctxUser.Avatar, req.Content)); err != nil {
+	if err := ch.WriteMessage(ws.NewChatMsg(ctxUser.AgentID, req.ReceiverID, ctxUser.Avatar, req.Type, req.Content)); err != nil {
 		resp.InternalServer(r, "err_ws_write_msg", "发送失败")
 	}
 	resp.OK(r)

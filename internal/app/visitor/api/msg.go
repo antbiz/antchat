@@ -36,6 +36,8 @@ func (msgApi) Send(r *ghttp.Request) {
 		Content:    req.Content,
 		Type:       req.Type,
 	})
+	req.AgentID = ctxVisitor.AgentID
+	req.VisitorID = ctxVisitor.ID
 
 	g.Log().Async().Debugf("获取访客 %s session信息中的客服id：%s", ctxVisitor.ID, ctxVisitor.AgentID)
 	ach := ws.AgentChatSrv().GetChannelByUID(ctxVisitor.AgentID)
@@ -47,7 +49,7 @@ func (msgApi) Send(r *ghttp.Request) {
 	} else {
 		vch := ws.VisitorChatSrv().GetChannelByUID(ctxVisitor.ID)
 		if vch != nil {
-			_ = vch.WriteSystemMessage("当前客服繁忙，请您耐心等待！")
+			_ = vch.WriteSystemMessage(ctxVisitor.AgentID, ctxVisitor.ID, "当前客服繁忙，请您耐心等待！")
 		}
 	}
 	resp.OK(r)

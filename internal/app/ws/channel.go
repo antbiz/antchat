@@ -25,29 +25,29 @@ func (ch *Channel) WriteMessage(msg *ChatMsg) error {
 	return nil
 }
 
-func (ch *Channel) WriteTextMessage(avatar, text string) error {
-	msg := NewChatMsg(ChatMsgTypeText, avatar, g.Map{
+func (ch *Channel) WriteTextMessage(aid, vid, avatar, text string) error {
+	msg := NewChatMsg(aid, vid, avatar, ChatMsgTypeText, g.Map{
 		"text": text,
 	})
 	return ch.WriteMessage(msg)
 }
 
-func (ch *Channel) WriteTextMessagef(avatar, format string, v ...interface{}) error {
-	msg := NewChatMsg(ChatMsgTypeText, avatar, g.Map{
+func (ch *Channel) WriteTextMessagef(aid, vid, avatar, format string, v ...interface{}) error {
+	msg := NewChatMsg(aid, vid, avatar, ChatMsgTypeText, g.Map{
 		"text": fmt.Sprintf(format, v...),
 	})
 	return ch.WriteMessage(msg)
 }
 
-func (ch *Channel) WriteSystemMessage(text string) error {
-	msg := NewChatMsg(ChatMsgTypeSystem, "", g.Map{
+func (ch *Channel) WriteSystemMessage(aid, vid, text string) error {
+	msg := NewChatMsg(aid, vid, "", ChatMsgTypeSystem, g.Map{
 		"text": text,
 	})
 	return ch.WriteMessage(msg)
 }
 
-func (ch *Channel) WriteSystemMessagef(text string, format string, v ...interface{}) error {
-	msg := NewChatMsg(ChatMsgTypeSystem, "", g.Map{
+func (ch *Channel) WriteSystemMessagef(aid, vid, text string, format string, v ...interface{}) error {
+	msg := NewChatMsg(aid, vid, "", ChatMsgTypeSystem, g.Map{
 		"text": fmt.Sprintf(format, v...),
 	})
 	return ch.WriteMessage(msg)
