@@ -14,7 +14,7 @@ func Init() {
 	s.Group("/api/v1/agent", func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.Auth, middleware.CtxUser)
 
-		group.GET("/chat", ws.AgentChatHandler)
+		group.ALL("/chat", ws.AgentChatHandler)
 		group.POST("/send", api.Msg.Send)
 		group.GET("/history", api.Msg.History)
 		group.GET("/conversations", api.Msg.Conversations)

@@ -72,7 +72,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 			"data": &Conversation{
 				VisitorID: ctxVisitor.ID,
 				Nickname:  ctxVisitor.Nickname,
-				Message:   lastMsgContent,
+				Content:   lastMsgContent,
 				ActiveAt:  activeAt,
 			},
 			"code": "incoming_update",

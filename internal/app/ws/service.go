@@ -12,7 +12,7 @@ import (
 type Conversation struct {
 	VisitorID string                 `json:"id"`
 	Nickname  string                 `json:"nickname"`
-	Message   map[string]interface{} `json:"message"`
+	Content   map[string]interface{} `json:"content"`
 	ActiveAt  time.Time              `json:"activeAt"`
 }
 
@@ -49,7 +49,7 @@ func GetRealtimeConversations(ctx context.Context) ([]*Conversation, error) {
 			conversations[i] = &Conversation{
 				VisitorID: vid,
 				Nickname:  visitorNicks[vid],
-				Message: g.Map{
+				Content: g.Map{
 					"text": "新访客",
 				},
 				ActiveAt: gtime.Now().Time,
@@ -58,7 +58,7 @@ func GetRealtimeConversations(ctx context.Context) ([]*Conversation, error) {
 			conversations[i] = &Conversation{
 				VisitorID: msg.VisitorID,
 				Nickname:  visitorNicks[msg.VisitorID],
-				Message:   msg.Content,
+				Content:   msg.Content,
 				ActiveAt:  msg.CreatedAt,
 			}
 		}

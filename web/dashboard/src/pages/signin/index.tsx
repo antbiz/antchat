@@ -6,6 +6,7 @@ import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from '
 import Footer from '@/components/Footer';
 import { signin } from '@/services/account';
 import styles from './index.less';
+import { setApiSid } from '@/utils/authority';
 
 /** 此方法会跳转到 redirect 参数所在的位置 */
 const goto = () => {
@@ -40,7 +41,7 @@ const Signin: React.FC = () => {
       const { sid } = await signin(values);
       if (sid) {
         message.success('登录成功！');
-        localStorage.setItem('x-api-sid', sid);
+        setApiSid(sid);
         await fetchUserInfo();
         goto();
       }

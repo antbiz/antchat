@@ -16,8 +16,8 @@ func Init() {
 
 		group.Middleware(middleware.Auth, middleware.CtxVisitor)
 
-		group.GET("/history", api.Msg.History)
+		group.ALL("/chat", ws.VisitorChatHandler)
 		group.POST("/send", api.Msg.Send)
-		group.GET("/chat", ws.VisitorChatHandler)
+		group.GET("/history", api.Msg.History)
 	})
 }

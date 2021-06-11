@@ -17,7 +17,7 @@ var (
 )
 
 type DefaultField struct {
-	ID        primitive.ObjectID `bson:"_id" json:"_id"`
+	ID        primitive.ObjectID `bson:"_id" json:"id"`
 	CreatedAt time.Time          `bson:"createdAt" json:"createdAt"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt"`
 }

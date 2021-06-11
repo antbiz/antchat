@@ -2,7 +2,7 @@
   "name": "antchat",
   "version": "0.0.1",
   "private": true,
-  "description": "🚀开源客服系统",
+  "description": "🚀 开源客服系统",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",

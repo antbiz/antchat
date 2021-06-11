@@ -6,7 +6,9 @@ import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import { currentUser as queryCurrentUser } from '@/services/account';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
-import 'windi.css';
+import { getApiSid } from './utils/authority';
+// FIXME: 暂时没用到，另外样式和登录页冲突
+// import 'windi.css';
 
 const isDev = process.env.NODE_ENV === 'development';
 const signinPath = '/signin';
@@ -77,7 +79,7 @@ export const request: RequestConfig = {
     throw error;
   },
   headers: {
-    'x-api-sid': localStorage.getItem('x-api-sid') || '',
+    'x-api-sid': getApiSid(),
   },
 };
 

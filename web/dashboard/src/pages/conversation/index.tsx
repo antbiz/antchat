@@ -4,49 +4,34 @@ import { MessageOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import Chat, { Bubble, useMessages } from '@chatui/core';
 import useWebSocket from "react-use-websocket";
+import moment from 'moment';
+import { getChatHistory, sendMsg } from '@/services/agent';
+import { getApiSid } from '@/utils/authority';
 import '@chatui/core/dist/index.css';
 import './index.less';
 
-export type Conversation = {
-  id: string;
-  active?: boolean;
-  avatar?: string;
-  contactName?: string;
-  msg?: string;
-}
 
 // 默认快捷短语，可选
+// TODO: 可配置
 const defaultQuickReplies = [
   {
     icon: 'message',
-    name: '联系人工服务',
+    name: '您好！请问有什么可以帮助您？',
     isNew: true,
     isHighlight: true,
-  },
-  {
-    name: '短语1',
-    isNew: true,
-  },
-  {
-    name: '短语2',
-    isHighlight: true,
-  },
-  {
-    name: '短语3',
   },
 ];
 
 export default (): React.ReactNode => {
-  const [tab, setTab] = useState('mine');
-  const [mineContacts, setMineContacts] = useState<Conversation[]>();
-  const [activeConversation, setActiveConversation] = useState<String>('');
+  const [conversations, setSonversations] = useState<API.Conversation[]>();
+  const [activeConversation, setActiveConversation] = useState<API.Conversation>();
   // 消息列表
-  const { messages, appendMsg, setTyping } = useMessages();
+  const { messages, appendMsg, setTyping, resetList } = useMessages();
+  const [chatBoxLoading, setChatBoxLoading] = useState<Boolean>(false);
 
-  const {
-    sendJsonMessage
-  } = useWebSocket(
-    'ws://localhost:8199',
+  // TODO: 客户端发送心跳？目前服务端有个45s的ping
+  useWebSocket(
+    `ws://${document.location.host}/api/v1/agent/chat?x-api-sid=${getApiSid()}`,
     {
       onOpen: () => console.log("Connection Opened"),
       onClose: () => console.log("Websocket Connection Closed"),
@@ -54,10 +39,9 @@ export default (): React.ReactNode => {
       onMessage: (event: any) => {
         const response = JSON.parse(event.data);
         console.log("recevied: ", response);
-        if (response.type === "cmd" && response.content && response.content.code === "mine_contacts") {
-          setMineContacts(response.content.list);
-          setActiveConversation(response.content.list[0].id);
-        } else {
+        if (response.type === "cmd" && response.content && response.content.code === "incoming_update") {
+          setSonversations(response.content.list);
+        } else if (response.visitorID === activeConversation?.id) {
           appendMsg({
             ...response,
             position: 'left',
@@ -73,29 +57,31 @@ export default (): React.ReactNode => {
     true
   );
 
-  // 发送回调
-  function handleSend(type: any, val: any) {
-    if (type === 'text' && val.trim()) {
-      // TODO: 发送请求
-      appendMsg({
+  const handleSend = async (type: string, val: string) => {
+    if (!activeConversation || type !== 'text' || !val.trim()) return;
+    appendMsg({
+      type: 'text',
+      content: { text: val },
+      position: 'right',
+    });
+    try {
+      await sendMsg({
+        receiverID: activeConversation.id,
+        receiverNick: activeConversation.nickname,
         type: 'text',
         content: { text: val },
-        position: 'right',
-      });
-      sendJsonMessage({
-        type: 'text',
-        content: { text: val },
-        position: 'right',
       })
-
-      setTyping(true);
+    } catch (e) {
+      // do nothing
     }
-  }
+    setTyping(true);
+
+  };
 
   // 快捷短语回调，可根据 item 数据做出不同的操作，这里以发送文本消息为例
-  function handleQuickReplyClick(item: any) {
+  const handleQuickReplyClick = (item: any) => {
     handleSend('text', item.name);
-  }
+  };
 
   function renderMessageContent(msg: any) {
     const { type, content } = msg;
@@ -113,6 +99,18 @@ export default (): React.ReactNode => {
       default:
         return null;
     }
+  };
+
+  const handleSwitchConversation = async (item: API.Conversation) => {
+    setActiveConversation(item);
+    setChatBoxLoading(true);
+    try {
+      const historyMsgList = await getChatHistory(item.id);
+      resetList(historyMsgList);
+    } catch (e) {
+      // do nothing
+    }
+    setChatBoxLoading(false);
   }
 
   return (
@@ -120,67 +118,58 @@ export default (): React.ReactNode => {
       <ProCard
         title="Conversations"
         colSpan="30%"
-        tabs={{
-          tabPosition: 'top',
-          activeKey: tab,
-          onChange: (key) => {
-            setTab(key);
-          },
-        }}
       >
-        <ProCard.TabPane key="mine" tab="Mine" className="conversation-list">
-          <List
-            pagination={{
-              onChange: page => {
-                console.log(page);
-              },
-              pageSize: 10,
-            }}
-            itemLayout="horizontal"
-            dataSource={mineContacts}
-            renderItem={item => (
-              <div className={`conversation ${activeConversation === item.id ? 'active': '' }`}
-                onClick={(e) => {
-                  setActiveConversation(item.id)
-                }}
-              >
-                <Comment
-                  author={item.contactName}
-                  avatar={item.avatar}
-                  content={item.msg}
-                  datetime={
-                    <Tooltip title="2 hours ago">
-                      <span>2 hours ago</span>
-                    </Tooltip>
+        <List<API.Conversation>
+          pagination={{
+            onChange: page => {
+              console.log(page);
+            },
+            pageSize: 10,
+          }}
+          itemLayout="horizontal"
+          dataSource={conversations}
+          renderItem={item => (
+            <div className={`conversation ${activeConversation?.id === item.id ? 'active': '' }`}
+              onClick={(e) => {
+                handleSwitchConversation(item)
+              }}
+            >
+              <Comment
+                author={item.nickname}
+                // avatar={item.avatar}
+                content={item.content ? item.content.text || '' : ''}
+                datetime={() => {
+                  const activeAgo = item.activeAt ? moment(item.activeAt as string).fromNow() : '';
+                  return activeAgo ? (
+                      <Tooltip title={activeAgo}>
+                        <span>2 hours ago</span>
+                      </Tooltip>
+                    ) : ''
                   }
-                />
-              </div>
-            )}
-          />
-        </ProCard.TabPane>
-        <ProCard.TabPane key="unassigned" tab="Unassigned">
-          Unassigned
-        </ProCard.TabPane>
-        <ProCard.TabPane key="all" tab="All">
-          All
-        </ProCard.TabPane>
+                }
+              />
+            </div>
+          )}
+        />
       </ProCard>
-      <ProCard>
+      <ProCard
+        loading={chatBoxLoading}
+      >
         {
-          tab === "all" ? (
-            <Result
-              icon={<MessageOutlined />}
-              title="无选中对话"
-              subTitle="没有需要处理的对话，休息一下吧！"
-            />
-          ) : (
+          activeConversation ? (
             <Chat
-              navbar={{ title: `匿名用户 ${activeConversation}` }}
+              navbar={{ title: `匿名用户 ${activeConversation.nickname}` }}
               messages={messages}
               renderMessageContent={renderMessageContent}
               quickReplies={defaultQuickReplies}
               onQuickReplyClick={handleQuickReplyClick}
               onSend={handleSend}
+            />
+          ) : (
+            <Result
+              icon={<MessageOutlined />}
+              title="无选中对话"
+              subTitle="没有需要处理的对话，休息一下吧！"
             />
           )
         }
