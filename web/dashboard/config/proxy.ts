@@ -12,6 +12,11 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^http://localhost:8001': '' },
     },
+    'ws://localhost:8001/api': {
+      target: 'ws://localhost:8199',
+      changeOrigin: true,
+      pathRewrite: { '^ws://localhost:8001': '' },
+    },
   },
   test: {
     '/api': {
