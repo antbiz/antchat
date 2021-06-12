@@ -17,7 +17,7 @@ type Conversation struct {
 }
 
 // GetRealtimeConversations 获取当前所有对话
-func GetRealtimeConversations(ctx context.Context) (conversations []*Conversation, err error) {
+func GetRealtimeConversations(ctx context.Context) ([]*Conversation, error) {
 	// 获取当前在线的所有的访客
 	onlineVisitorIDs := make([]string, 0)
 	visitorNicks := make(map[string]string)
@@ -28,12 +28,12 @@ func GetRealtimeConversations(ctx context.Context) (conversations []*Conversatio
 		}
 	}
 	if len(onlineVisitorIDs) == 0 {
-		return conversations, nil
+		return nil, nil
 	}
 
 	msgs, err := db.GetLastMessagesByVisitorIDs(ctx, onlineVisitorIDs)
 	if err != nil {
-		return conversations, err
+		return nil, err
 	}
 	visitorMsgs := make(map[string]*db.Message, len(msgs))
 	for _, msg := range msgs {
@@ -42,7 +42,7 @@ func GetRealtimeConversations(ctx context.Context) (conversations []*Conversatio
 
 	// TODO: 按照加入时间和会话时间排序
 
-	conversations = make([]*Conversation, len(onlineVisitorIDs))
+	conversations := make([]*Conversation, len(onlineVisitorIDs))
 	for i, vid := range onlineVisitorIDs {
 		msg := visitorMsgs[vid]
 		if msg == nil {

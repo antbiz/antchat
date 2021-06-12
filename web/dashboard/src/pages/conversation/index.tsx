@@ -6,6 +6,7 @@ import Chat, { Bubble, useMessages } from '@chatui/core';
 import useWebSocket from "react-use-websocket";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import VisitorForm from './VisitorForm';
 import { getChatHistory, getConversations, sendMsg } from '@/services/agent';
 import { getApiSid } from '@/utils/authority';
 import '@chatui/core/dist/index.css';
@@ -123,7 +124,7 @@ export default (): React.ReactNode => {
   };
 
   const fetchConversations = async () => {
-    const data = await getConversations();
+    const { data } = await getConversations();
     setSonversations(data || []);
     if (data) {
       handleSwitchConversation(data[0]);
@@ -138,7 +139,8 @@ export default (): React.ReactNode => {
     <ProCard split="vertical">
       <ProCard
         title="Conversations"
-        colSpan="30%"
+        colSpan="20%"
+        className="conversation-container"
       >
         <List<API.Conversation>
           pagination={{
@@ -189,6 +191,14 @@ export default (): React.ReactNode => {
           )
         }
       </ProCard>
+      {activeConversation && (
+        <ProCard
+          title="客户信息"
+          colSpan="20%"
+        >
+          <VisitorForm visitorID={activeConversation.id} />
+        </ProCard>
+      )}
     </ProCard>
   );
 };

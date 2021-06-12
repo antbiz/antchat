@@ -56,11 +56,13 @@ func (msgApi) History(r *ghttp.Request) {
 
 	ctx := r.Context()
 
-	msgs, err := db.FindMessageByVisitorIDWithPaging(ctx, req.VisitorID, req.PageNum, req.PageSize)
+	// TODO: 前端实现历史消息下拉
+	// msgs, err := db.FindMessageByVisitorIDWithPaging(ctx, req.VisitorID, req.PageNum, req.PageSize)
+	msgs, err := db.FindMessageByVisitorID(ctx, req.VisitorID)
 	if err != nil {
 		resp.DatabaseError(r, "拉取消息失败")
 	}
-	resp.PageOK(r, 0, msgs)
+	resp.PageOK(r, len(msgs), msgs)
 }
 
 // Conversations 拉取对话列表
@@ -70,5 +72,5 @@ func (msgApi) Conversations(r *ghttp.Request) {
 	if err != nil {
 		resp.InternalServer(r, "err_get_conversations", "拉取对话列表失败", err)
 	}
-	resp.OK(r, res)
+	resp.PageOK(r, len(res), res)
 }

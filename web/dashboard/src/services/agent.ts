@@ -25,7 +25,7 @@ export async function getChatHistory(visitorID: string, options?: { [key: string
 
 /** 获取当前对话列表 GET /api/v1/agent/conversations */
 export async function getConversations(options?: { [key: string]: any }) {
-  return request<API.Conversation[]>('/api/v1/agent/conversations', {
+  return request<{data: API.Conversation[]}>('/api/v1/agent/conversations', {
     method: 'GET',
     ...(options || {}),
   });

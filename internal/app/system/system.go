@@ -15,5 +15,8 @@ func Init() {
 
 		group.Middleware(middleware.Auth)
 		group.GET("/account/info", api.User.GetInfo)
+
+		group.GET("/visitor/{id}", api.Visitor.Get)
+		group.PUT("/visitor/{id}", api.Visitor.Update)
 	})
 }

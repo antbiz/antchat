@@ -94,4 +94,11 @@ declare namespace API {
     content?: any;
     status?: number;
   }
+
+  type Visitor = {
+    id?: string;
+    nickname: string;
+    email?: string;
+    phone?: string;
+  }
 }
