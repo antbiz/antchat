@@ -92,6 +92,6 @@ declare namespace API {
     senderNick?: string;
     type?: string;
     content?: any;
-    stats?: number;
+    status?: number;
   }
 }

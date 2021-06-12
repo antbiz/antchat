@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { List, Result, Comment, Tooltip } from 'antd';
+import { List, Result, Comment } from 'antd';
 import { MessageOutlined } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import Chat, { Bubble, useMessages } from '@chatui/core';
 import useWebSocket from "react-use-websocket";
-import moment from 'moment';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { getChatHistory, getConversations, sendMsg } from '@/services/agent';
 import { getApiSid } from '@/utils/authority';
 import '@chatui/core/dist/index.css';
 import './index.less';
+dayjs.extend(relativeTime);
 
 
 // 默认快捷短语，可选
@@ -105,8 +107,15 @@ export default (): React.ReactNode => {
     setActiveConversation(item);
     setChatBoxLoading(true);
     try {
-      const historyMsgList = await getChatHistory(item.id);
-      // resetList(historyMsgList);
+      const { data = [] } = await getChatHistory(item.id);
+      resetList(data.map(function(item) {
+        return {
+          _id: item.id,
+          type: item.type,
+          content: item.content,
+          position: item.senderID === item.visitorID ? 'left' : 'right'
+        }
+      }));
     } catch (e) {
       // do nothing
     }
@@ -149,19 +158,13 @@ export default (): React.ReactNode => {
               <Comment
                 author={item.nickname}
                 // avatar={item.avatar}
+                avatar="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
                 content={item.content ? item.content.text || '' : ''}
-                datetime={() => {
-                  const activeAgo = item.activeAt ? moment(item.activeAt as string).fromNow() : '';
-                  return activeAgo ? (
-                      <Tooltip title={activeAgo}>
-                        <span>2 hours ago</span>
-                      </Tooltip>
-                    ) : ''
-                  }
-                }
+                datetime={dayjs(item.activeAt as string).fromNow()}
               />
             </div>
           )}
+          className="conversation-list"
         />
       </ProCard>
       <ProCard
@@ -170,7 +173,7 @@ export default (): React.ReactNode => {
         {
           activeConversation ? (
             <Chat
-              navbar={{ title: `匿名用户 ${activeConversation.nickname}` }}
+              navbar={{ title: `${activeConversation.nickname || '匿名用户'}` }}
               messages={messages}
               renderMessageContent={renderMessageContent}
               quickReplies={defaultQuickReplies}

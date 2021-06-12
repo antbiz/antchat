@@ -17,7 +17,7 @@ export async function sendMsg(body: API.SendMsgRequest, options?: { [key: string
 
 /** 获取指定访客的聊天记录 GET /api/v1/agent/history?visitorID= */
 export async function getChatHistory(visitorID: string, options?: { [key: string]: any }) {
-  return request<API.Message[]>(`/api/v1/agent/history?visitorID=${visitorID}`, {
+  return request<{data: API.Message[]}>(`/api/v1/agent/history?visitorID=${visitorID}`, {
     method: 'GET',
     ...(options || {}),
   });

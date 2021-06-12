@@ -69,7 +69,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 			activeAt = lastMsg.CreatedAt
 		}
 
-		msg := NewChatMsg(aid, ch.uid, "", ChatMsgTypeSystem, g.Map{
+		msg := NewChatMsg(aid, ch.uid, "", ChatMsgTypeCmd, g.Map{
 			"data": &Conversation{
 				VisitorID: ctxVisitor.ID,
 				Nickname:  ctxVisitor.Nickname,

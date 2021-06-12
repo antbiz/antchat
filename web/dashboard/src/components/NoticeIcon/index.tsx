@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Tag, message } from 'antd';
 import { groupBy } from 'lodash';
-import moment from 'moment';
 import { useModel } from 'umi';
-import { getNotices } from '@/services/ant-design-pro/api';
-
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { getNotices } from '@/services/account';
 import NoticeIcon from './NoticeIcon';
 import styles from './index.less';
+dayjs.extend(relativeTime);
+
 
 export type GlobalHeaderRightProps = {
   fetchingNotices?: boolean;
@@ -23,7 +25,7 @@ const getNoticeData = (notices: API.NoticeIconItem[]): Record<string, API.Notice
     const newNotice = { ...notice };
 
     if (newNotice.datetime) {
-      newNotice.datetime = moment(notice.datetime as string).fromNow();
+      newNotice.datetime = dayjs(notice.datetime as string).fromNow(true);
     }
 
     if (newNotice.id) {
@@ -110,7 +112,7 @@ const NoticeIconView = () => {
   return (
     <NoticeIcon
       className={styles.action}
-      count={currentUser && currentUser.unreadCount}
+      count={99}
       onItemClick={(item) => {
         changeReadState(item.id!);
       }}
