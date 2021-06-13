@@ -14,6 +14,74 @@
   </head>
   <body>
     <div id="root"></div>
+    <div
+      id="antchat_widget"
+      style="
+        position: fixed; z-index: 2147483000 !important; right: 40px; bottom: 50px;
+        border: none; overflow: visible; overflow-wrap: normal; text-align: center;
+        box-sizing: border-box; display: block !important; user-select: none;
+        /* debug */
+        display: none !important;
+      "
+    >
+      <div
+        style="
+          background-color: #1890ff;
+          width: 150px;
+          height: 44px;
+          line-height: 44px;
+          text-align: center;
+          border-radius: 22px;
+          color: rgba(0, 0, 0, 0.87);
+          cursor: pointer;
+          -webkit-box-shadow: 0 12px 12px 0 rgb(9 7 7 / 3%),
+            0 8px 4px 0 rgb(0 0 0 / 4%);
+          box-shadow: 0 12px 12px 0 rgb(9 7 7 / 3%), 0 8px 4px 0 rgb(0 0 0 / 4%);
+        "
+      >
+        <img
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAUVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////8IN+deAAAAGnRSTlMAAwgJEBk0TVheY2R5eo+ut8jb5OXs8fX2+cjRDTIAAADsSURBVHgBldZbkoMgFIThRgQv8SKKgGf/C51UnJqaRI30/9zfe+NQUQ3TvG7bOk9DVeCmshmj/CuOTYnrdBfkUOg0zlOtl9OWVuEk4+QyZ3DIevmSt/ioTvK1VH/s5bY3YdM9SBZ/mUUyWgx+U06ycgp7D8msxSvtc4HXL9BLdj2elSEfhBJAI0QNgJEBI1BEBsQClVBVGDgwYOLAhJkDM1YOrNg4sLFAsLJgZsHEgoEFFQt0JAFGFjQsKAMJ0LFAexKgZYFyJIDxJIBNJEDNAtSJBLCeBDCOBFAPzwFA94ED+zmhwDO9358r8ANtIsMXi7qVAwAAAABJRU5ErkJggg=="
+          style="width: 20px; vertical-align: middle;"
+        />
+        <span
+          style="
+            align-items: center;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            justify-content: center;
+            vertical-align: middle;
+            width: auto !important;
+            margin-left: 2px;
+          "
+        >
+          Chat with us
+        </span>
+      </div>
+      <div
+        style="
+          position: absolute;
+          overflow: hidden;
+          display: none;
+          padding: 8px;
+          width: 460px;
+          height: 554px;
+          left: -464px;
+          bottom: -8px;
+          -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+        ">
+        <div
+          style="
+            position: absolute;
+            overflow: hidden;
+            border-radius: 12px;
+            -webkit-box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 6%), 0 1.5px 3px 0 rgb(0 0 0 / 8%);
+            box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 6%), 0 1.5px 3px 0 rgb(0 0 0 / 8%);
+          "
+        ></div>
+      </div>
+    </div>
     <script src="//g.alicdn.com/chatui/sdk-v2/0.2.2/sdk.js"></script>
     <script src="//g.alicdn.com/chatui/icons/0.2.7/index.js" async></script>
     <script>
@@ -38,18 +106,19 @@
         requests: {
           history: function () {
             return {
-              url: "/api/v1/visitor/history",
+              url: "/api/v1/visitor/history?x-api-sid=pp2gap0k42pod0cc0u01wv7oxs100z4o",
             };
           },
           send: function (msg) {
             return {
-              url: "/api/v1/visitor/send",
+              url: "/api/v1/visitor/send?x-api-sid=pp2gap0k42pod0cc0u01wv7oxs100z4o",
+              method: "POST",
               data: msg
             };
           },
         },
         makeSocket({ctx}) {
-          const ws = new WebSocket(`ws://${document.location.host}/api/v1/visitor/chat?x-api-sid=${localStorage.getItem('x-api-sid') || ''}`);
+          const ws = new WebSocket(`ws://${document.location.host}/api/v1/visitor/chat?x-api-sid=pp2gap0k42pod0cc0u01wv7oxs100z4o`);
           let queueMsgId;
 
           ws.onmessage = (e) => {
@@ -81,7 +150,6 @@
           }
         }
       });
-
       bot.run();
     </script>
   </body>
