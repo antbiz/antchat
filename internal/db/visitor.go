@@ -70,3 +70,33 @@ func UpsertVisitor(ctx context.Context, visitor *Visitor) (id string, err error)
 	}
 	return
 }
+
+func GetVisitorNicks(ctx context.Context, ids []string) (nickmap map[string]string, err error) {
+	if len(ids) == 0 {
+		return
+	}
+	objids := make([]primitive.ObjectID, len(ids))
+	for i, id := range ids {
+		objid, _ := primitive.ObjectIDFromHex(id)
+		objids[i] = objid
+	}
+
+	visitors := make([]*Visitor, 0)
+	err = GetVisitorCollection().
+		Find(
+			ctx,
+			bson.M{"_id": bson.M{
+				"$in": objids,
+			}},
+		).
+		All(&visitors)
+	if err != nil {
+		return nil, err
+	}
+
+	nickmap = make(map[string]string, len(visitors))
+	for _, v := range visitors {
+		nickmap[v.ID.Hex()] = v.Nickname
+	}
+	return
+}

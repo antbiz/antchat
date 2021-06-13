@@ -10,7 +10,7 @@ import (
 func Init() {
 	s := g.Server()
 
-	s.Group("/api/v1", func(group *ghttp.RouterGroup) {
+	s.Group("/api/sys", func(group *ghttp.RouterGroup) {
 		group.POST("/account/signin", api.User.SigninByAccount)
 
 		group.Middleware(middleware.Auth)

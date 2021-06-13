@@ -29,12 +29,11 @@ func (msgApi) Send(r *ghttp.Request) {
 	ctxVisitor := shared.Ctx.GetCtxVisitor(ctx)
 	// FIXME: 用ctx会报错：db.CreateMessage: connection(localhost:27017[-4]) failed to write: context canceled
 	go db.CreateMessage(context.Background(), &db.Message{
-		AgentID:    ctxVisitor.AgentID,
-		VisitorID:  ctxVisitor.ID,
-		SenderID:   ctxVisitor.ID,
-		SenderNick: ctxVisitor.Nickname,
-		Content:    req.Content,
-		Type:       req.Type,
+		AgentID:   ctxVisitor.AgentID,
+		VisitorID: ctxVisitor.ID,
+		SenderID:  ctxVisitor.ID,
+		Content:   req.Content,
+		Type:      req.Type,
 	})
 	req.AgentID = ctxVisitor.AgentID
 	req.VisitorID = ctxVisitor.ID

@@ -13,9 +13,6 @@ func CtxUser(r *ghttp.Request) {
 			ID:       sessionUserID,
 			AgentID:  r.Session.GetString("agentID"),
 			Username: r.Session.GetString("username"),
-			Phone:    r.Session.GetString("phone"),
-			Email:    r.Session.GetString("email"),
-			Avatar:   r.Session.GetString("avatar"),
 			Language: r.Session.GetString("language"),
 			Role:     r.Session.GetInt("role"),
 			Sid:      r.Session.GetString("sid"),
@@ -31,7 +28,6 @@ func CtxVisitor(r *ghttp.Request) {
 		shared.Ctx.InitCtxVisitor(r, &types.ContextVisitor{
 			ID:       sessionUserID,
 			AgentID:  r.Session.GetString("agentID"),
-			Nickname: r.Session.GetString("nickname"),
 			Language: r.Session.GetString("language"),
 		})
 	}

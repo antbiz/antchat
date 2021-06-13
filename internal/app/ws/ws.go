@@ -59,6 +59,7 @@ func VisitorChatHandler(r *ghttp.Request) {
 		var (
 			lastMsgContent map[string]interface{}
 			activeAt       time.Time
+			visitorNick    string
 		)
 		lastMsg, _ := db.GetLastMessageByVisitorID(ctx, ctxVisitor.ID)
 		if lastMsg == nil {
@@ -68,11 +69,16 @@ func VisitorChatHandler(r *ghttp.Request) {
 			lastMsgContent = lastMsg.Content
 			activeAt = lastMsg.CreatedAt
 		}
+		if visitor, err := db.GetVisitorByID(ctx, ctxVisitor.ID); err != nil {
+			g.Log().Async().Errorf("ws.VisitorChatHandler.GetVisitorByID: %v", err)
+		} else {
+			visitorNick = visitor.Nickname
+		}
 
-		msg := NewChatMsg(aid, ch.uid, "", ChatMsgTypeCmd, g.Map{
+		msg := NewChatMsg(aid, ch.uid, ChatMsgTypeCmd, g.Map{
 			"data": &Conversation{
 				VisitorID: ctxVisitor.ID,
-				Nickname:  ctxVisitor.Nickname,
+				Nickname:  visitorNick,
 				Content:   lastMsgContent,
 				ActiveAt:  activeAt,
 			},

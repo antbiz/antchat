@@ -11,13 +11,12 @@ import (
 // Message 消息
 type Message struct {
 	DefaultField `bson:",inline"`
-	AgentID      string                 `bson:"agentID" json:"agentID"`       // 客服ID
-	VisitorID    string                 `bson:"visitorID" json:"visitorID"`   // 访客ID
-	SenderID     string                 `bson:"senderID" json:"senderID"`     // 发送者ID
-	SenderNick   string                 `bson:"senderNick" json:"senderNick"` // 发送者昵称
-	Type         string                 `bson:"type" json:"type"`             // 消息类型
-	Content      map[string]interface{} `bson:"content" json:"content"`       // 消息内容
-	Status       int                    `bson:"status" json:"status"`         // 消息状态
+	AgentID      string                 `bson:"agentID" json:"agentID"`     // 客服ID
+	VisitorID    string                 `bson:"visitorID" json:"visitorID"` // 访客ID
+	SenderID     string                 `bson:"senderID" json:"senderID"`   // 发送者ID
+	Type         string                 `bson:"type" json:"type"`           // 消息类型
+	Content      map[string]interface{} `bson:"content" json:"content"`     // 消息内容
+	Status       int                    `bson:"status" json:"status"`       // 消息状态
 }
 
 func GetMessageCollection() *qmgo.Collection {

@@ -15,12 +15,9 @@ type ChatMsg struct {
 	Type      string                 `json:"type"`
 	Content   map[string]interface{} `json:"content" v:"required"`
 	CreatedAt int64                  `json:"createdAt"`
-	User      struct {
-		Avatar string `json:"avatar"`
-	} `json:"user"`
 }
 
-func NewChatMsg(aid, vid, avatar, msgType string, content map[string]interface{}) *ChatMsg {
+func NewChatMsg(aid, vid, msgType string, content map[string]interface{}) *ChatMsg {
 	msg := &ChatMsg{
 		AgentID:   aid,
 		VisitorID: vid,
@@ -28,6 +25,5 @@ func NewChatMsg(aid, vid, avatar, msgType string, content map[string]interface{}
 		Content:   content,
 		CreatedAt: gtime.Now().Timestamp(),
 	}
-	msg.User.Avatar = avatar
 	return msg
 }

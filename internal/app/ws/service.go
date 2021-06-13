@@ -20,17 +20,18 @@ type Conversation struct {
 func GetRealtimeConversations(ctx context.Context) ([]*Conversation, error) {
 	// 获取当前在线的所有的访客
 	onlineVisitorIDs := make([]string, 0)
-	visitorNicks := make(map[string]string)
 	for _, b := range visitorChatSrv.Buckets {
 		for _, visitor := range b.chs {
 			onlineVisitorIDs = append(onlineVisitorIDs, visitor.uid)
-			visitorNicks[visitor.uid] = visitor.sess.GetString("nickname")
 		}
 	}
 	if len(onlineVisitorIDs) == 0 {
 		return nil, nil
 	}
-
+	visitorNicks, err := db.GetVisitorNicks(ctx, onlineVisitorIDs)
+	if err != nil {
+		return nil, err
+	}
 	msgs, err := db.GetLastMessagesByVisitorIDs(ctx, onlineVisitorIDs)
 	if err != nil {
 		return nil, err

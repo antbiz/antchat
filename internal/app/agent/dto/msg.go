@@ -1,15 +1,6 @@
 package dto
 
-import "github.com/antbiz/antchat/internal/app/ws"
-
-type SendMsgReq struct {
-	ws.ChatMsg
-	SenderID     string
-	SenderNick   string
-	ReceiverID   string `json:"receiverID" v:"required"`
-	ReceiverNick string `json:"receiverNick" v:"required"`
-}
-
+// PullMsgReq 拉取指定访客的历史消息
 type PullMsgReq struct {
 	VisitorID string `json:"visitorID" v:"required"`
 	PageNum   int64  `json:"pageNum" v:"min:1" d:"1"`

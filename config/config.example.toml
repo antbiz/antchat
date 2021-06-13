@@ -8,6 +8,10 @@
     sessionIdName = "x-api-sid"
     sessionPath = "./tmp/gsession"
 
+# Template
+[viewer]
+    paths = ["internal/template"]
+
 # Logger
 [logger]
     level = "all"

@@ -12,6 +12,7 @@ func Init() {
 	s := g.Server()
 
 	s.Group("/api/v1/visitor", func(group *ghttp.RouterGroup) {
+		group.ALL("/widget", api.Widget.Index)
 		group.POST("/signin", api.Visitor.Signin)
 
 		group.Middleware(middleware.Auth, middleware.CtxVisitor)
