@@ -39,6 +39,7 @@ func (visitorApi) Signin(r *ghttp.Request) {
 		}
 		visitor.AgentID = storeVisitor.AgentID
 		visitor.ID = storeVisitor.ID
+		visitor.Nickname = storeVisitor.Nickname
 	} else {
 		visitor.ID = primitive.NewObjectID()
 	}

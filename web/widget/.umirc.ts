@@ -1,6 +1,18 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
+  proxy: {
+    'http://localhost:8002/api': {
+      target: 'http://localhost:8199',
+      changeOrigin: true,
+      pathRewrite: { '^http://localhost:8002': '' },
+    },
+    'ws://localhost:8002/api': {
+      target: 'ws://localhost:8199',
+      changeOrigin: true,
+      pathRewrite: { '^ws://localhost:8002': '' },
+    },
+  },
   nodeModulesTransform: {
     type: 'none',
   },

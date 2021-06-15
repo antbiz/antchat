@@ -57,13 +57,11 @@ declare namespace API {
   };
 
   type SendMsgRequest = {
-    receiverID: string;
-    receiverNick?: string;
+    visitorID: string;
     type?: string;
     content?: any;
     createdAt?: number;
-    user?: any;
-  }
+  };
 
   type CurrentUser = {
     id?: string;
@@ -81,7 +79,7 @@ declare namespace API {
     nickname?: string;
     content?: any;
     activeAt?: string;
-  }
+  };
 
   type Message = {
     id?: string;
@@ -93,12 +91,12 @@ declare namespace API {
     type?: string;
     content?: any;
     status?: number;
-  }
+  };
 
   type Visitor = {
     id?: string;
     nickname: string;
     email?: string;
     phone?: string;
-  }
+  };
 }

@@ -43,8 +43,10 @@ export default (): React.ReactNode => {
         const response = JSON.parse(event.data);
         console.log("recevied: ", response);
         if (response.type === "cmd" && response.content && response.content.code === "incoming_update") {
-          conversations.push(response.content.data);
-          setSonversations(conversations);
+          if (response.visitorID !== activeConversation?.id) {
+            conversations.push(response.content.data);
+            setSonversations(conversations);
+          };
         } else if (response.visitorID === activeConversation?.id) {
           appendMsg({
             ...response,
@@ -70,8 +72,7 @@ export default (): React.ReactNode => {
     });
     try {
       await sendMsg({
-        receiverID: activeConversation.id,
-        receiverNick: activeConversation.nickname,
+        visitorID: activeConversation.id,
         type: 'text',
         content: { text: val },
       })

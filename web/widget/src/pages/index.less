@@ -33,6 +33,7 @@
     border-radius: 22px;
     color: rgba(0, 0, 0, 0.87);
     cursor: pointer;
+    visibility: visible;
 
     @media only screen and (device-width: 768px) {
       /* default iPad screens */
@@ -109,6 +110,10 @@
   }
 
   &.opened {
+    .open-chat-btn {
+      visibility: hidden;
+    }
+
     .chat-dialog {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
