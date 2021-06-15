@@ -5,6 +5,7 @@ import (
 	"github.com/antbiz/antchat/internal/app/visitor/service"
 	"github.com/antbiz/antchat/internal/app/ws"
 	"github.com/antbiz/antchat/internal/db"
+	"github.com/antbiz/antchat/internal/pkg/captcha"
 	"github.com/antbiz/antchat/internal/pkg/resp"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
@@ -20,6 +21,9 @@ func (visitorApi) Signin(r *ghttp.Request) {
 	var req *dto.VisitorSigninReq
 	if err := r.Parse(&req); err != nil {
 		resp.InvalidArgument(r, err.Error())
+	}
+	if !captcha.Verify(req.CaptchaID, req.Captcha) {
+		resp.InvalidArgument(r, "验证码错误")
 	}
 
 	ctx := r.Context()

@@ -38,3 +38,11 @@ export async function getChatHistory(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 };
+
+/** 获取验证码 GET /api/v1/sys/captcha */
+export async function getCaptcha(options?: { [key: string]: any }) {
+  return request<API.CaptchaGenReply>('/api/sys/captcha', {
+    method: 'GET',
+    ...(options || {}),
+  });
+};

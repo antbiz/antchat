@@ -11,6 +11,7 @@ func Init() {
 	s := g.Server()
 
 	s.Group("/api/sys", func(group *ghttp.RouterGroup) {
+		group.GET("/captcha", api.Captcha.Generate)
 		group.POST("/account/signin", api.User.SigninByAccount)
 
 		group.Middleware(middleware.Auth)

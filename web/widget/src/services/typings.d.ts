@@ -9,28 +9,24 @@ declare namespace API {
     errorMessage?: string;
     /** 业务上的请求是否成功 */
     success?: boolean;
-  };
+  }
 
   type PageParams = {
     pageNum?: number;
     pageSize?: number;
-  };
-
-  type FakeCaptcha = {
-    code?: number;
-    status?: string;
-  };
+  }
 
   type SigninRequest = {
-    captcha: string;
-    domian: string;
+    captcha?: string;
+    captchaID?: string;
+    domain?: string;
     visitorID?: string;
-  };
+  }
 
   type SigninReply = {
     id: string;
     sid: string;
-  };
+  }
 
   type SendMsgRequest = {
     type?: string;
@@ -55,5 +51,10 @@ declare namespace API {
     nickname: string;
     email?: string;
     phone?: string;
+  }
+
+  type CaptchaGenReply = {
+    id: string;
+    base64: string;
   }
 }
