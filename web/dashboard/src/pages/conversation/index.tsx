@@ -196,6 +196,7 @@ export default (): React.ReactNode => {
         <ProCard
           title="客户信息"
           colSpan="20%"
+          loading={chatBoxLoading}
         >
           <VisitorForm visitorID={activeConversation.id} />
         </ProCard>
